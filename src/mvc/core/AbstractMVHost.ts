@@ -1,5 +1,5 @@
 module mvc {
-	export class ListenBox{
+	export class ListenerItemBox{
 		constructor(public handle: (e: EventX) => void,public thisObj:any){}
 	}
 
@@ -13,7 +13,7 @@ module mvc {
 
 		protected facade: IFacade = Facade.GetInstance();
 		protected _isReady: boolean = false;
-		protected readyHandle: ListenBox[];
+		protected readyHandle: ListenerItemBox[];
 
 		public get isReady(): boolean {
 			return this._isReady;
@@ -36,7 +36,7 @@ module mvc {
 			}
 
 			if (!this.readyHandle) {
-				this.readyHandle = new Array<ListenBox>();
+				this.readyHandle = new Array<ListenerItemBox>();
 			} else {
 				for(let item of this.readyHandle){
 					if(item.handle==handle){
@@ -44,7 +44,7 @@ module mvc {
 					}
 				}
 			}
-			this.readyHandle.push(new ListenBox(handle,thisObj));
+			this.readyHandle.push(new ListenerItemBox(handle,thisObj));
 			return true;
 		}
 		public removeReayHandle(handle: (e: EventX) => void): boolean {

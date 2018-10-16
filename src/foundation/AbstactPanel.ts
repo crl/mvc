@@ -5,7 +5,7 @@ module mvc {
 			super();
 		}
 		protected _parent: egret.DisplayObjectContainer;
-		protected readyHandle: ListenBox[];
+		protected readyHandle: ListenerItemBox[];
 
 		protected _uri: string;
 		protected _resizeable: boolean = false;
@@ -43,7 +43,7 @@ module mvc {
 			}
 
 			if (!this.readyHandle) {
-				this.readyHandle = new Array<ListenBox>();
+				this.readyHandle = new Array<ListenerItemBox>();
 			} else {
 				for(let item of this.readyHandle){
 					if(item.handle==handle){
@@ -51,7 +51,7 @@ module mvc {
 					}
 				}
 			}
-			this.readyHandle.push(new ListenBox(handle,thisObj));
+			this.readyHandle.push(new ListenerItemBox(handle,thisObj));
 			return true;
 		}
 		public removeReayHandle(handle: (e: EventX) => void): boolean {

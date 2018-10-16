@@ -68,7 +68,7 @@ namespace mvc {
 			return this.mvcInjectLock[className];
 		}
 
-		protected routerCreateInstance(type: any): Object {
+		protected routerCreateInstance(type: new()=>any): any {
 			return new type();
 		}
 
@@ -139,7 +139,7 @@ namespace mvc {
 			return ins;
 		}
 
-		public toggleMediatorByName(mediatorName: string, type?: number): IMediator {
+		public toggleMediatorByName(mediatorName: string, type: number=-1): IMediator {
 			if (!mediatorName) {
 				return null;
 			}
@@ -198,10 +198,7 @@ namespace mvc {
 			return mediator;
 		}
 
-		public toggleMediator<T extends IMediator>(c: new () => T, type?: number): T {
-			if (type == undefined) {
-				type = -1;
-			}
+		public toggleMediator<T extends IMediator>(c: new () => T, type: number=-1): T {
 			let fullClassName = egret.getQualifiedClassName(c);
 			let aliasName = fullClassName.split(".").pop();
 			let t=<T>this.toggleMediatorByName(aliasName, type);
@@ -213,7 +210,7 @@ namespace mvc {
 			return t;
 		}
 
-		public registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind?: boolean) {
+		public registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind: boolean=true) {
 			if (eventInterester == null) {
 				return;
 			}
