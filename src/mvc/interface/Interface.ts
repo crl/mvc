@@ -1,6 +1,6 @@
 namespace mvc {
 	export class InjectEventTypeHandle {
-        public constructor(public injectType: InjectEventType, public events: Array<string>, public handle: (e: EventX) => void) { }
+        public constructor(public injectType: InjectEventType, public events: Array<string>, public handle: (EventX) => void) { }
     }
 
 	export interface IEventInterester {
