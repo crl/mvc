@@ -32,4 +32,9 @@ class BagView extends mvc.AbstactPanel {
 
 		Facade.ToggleMediator(SkillMediator);
 	}
+
+
+	public fuck(){
+		console.log("call:",this.name,'fuck');
+	}
 }

@@ -12,6 +12,9 @@ namespace gameSDK {
 
 		public fuck() {
 			console.log("call:",this.name,'fuck');
+
+			this.view.fuck();
+			this.proxy.fuck();
 		}
 
 		@CMD(1000)

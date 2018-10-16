@@ -1,7 +1,7 @@
 module gameSDK {
 	export class BagProxy extends mvc.Proxy{
-		public constructor() {
-			super();
+		public fuck(){
+			console.log("call:",this.name,'fuck');
 		}
 	}
 }

@@ -1,7 +1,7 @@
 module gameSDK {
 	export class SkillProxy extends mvc.Proxy {
-		public constructor() {
-			super();
+		public fuck(){
+			console.log("call:",this.name,'fuck');
 		}
 	}
 }
