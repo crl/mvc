@@ -60,7 +60,7 @@ module mvc {
 					if (this.isCanAwaken() && this.isReady && this._isAwake == false) {
 						this._isAwake = true;
 						if (this._model != null) {
-							this.registerModelEvent(this._model, true);
+							this.registerProxyEvent(this._model, true);
 						}
 						this.preAwaken();
 					}
@@ -72,7 +72,7 @@ module mvc {
 					if (this.isReady && this._isAwake) {
 						this._isAwake = false;
 						if (this._model != null) {
-							this.registerModelEvent(this._model, false);
+							this.registerProxyEvent(this._model, false);
 						}
 						this.preSleep();
 					}
@@ -116,12 +116,12 @@ module mvc {
 					this._model.removeEventListener(EventX.PROGRESS, this.modelProgressHandle, this);
 				}
 				this._model.removeEventListener(EventX.READY, this.preModelReadyHandle, this);
-				this.registerModelEvent(this._model, false);
+				this.registerProxyEvent(this._model, false);
 			}
 
 			this._model = value;
 			if (this._model != null && this.isReady && this._isAwake) {
-				this.registerModelEvent(this._model, true);
+				this.registerProxyEvent(this._model, true);
 			}
 		}
 		public getProxy(): IProxy {
@@ -133,12 +133,12 @@ module mvc {
 		}
 
 
-		protected registerModelEvent(_model: IProxy, v: boolean) {
+		protected registerProxyEvent(_model: IProxy, isBind: boolean) {
 			if (_model == null) {
 				return;
 			}
 			let eventInterests = this.getEventInterests(InjectEventType.Proxy);
-			if (v) {
+			if (isBind) {
 				for (let typeEventsHandle of eventInterests) {
 					for (let eventType of typeEventsHandle.events) {
 						_model.addEventListener(eventType, typeEventsHandle.handle, this);
