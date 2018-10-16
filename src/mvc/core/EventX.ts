@@ -6,6 +6,8 @@ class EventX extends egret.Event {
     public static readonly MEDIATOR_SHOW: string = "mediatorShow";
     public static readonly MEDIATOR_HIDE: string = "mediatorHide";
 
+    public static readonly ReadyEventX: EventX = new EventX(EventX.READY);
+
     public data: any;
     public constructor(type: string, data: any = null) {
         super(type);

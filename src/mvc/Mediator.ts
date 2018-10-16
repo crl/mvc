@@ -21,6 +21,7 @@ module mvc {
 
 			if (this._view != null) {
 				this._view.__refMediator = this;
+				this.bindSetViewEvent(this._view, true);
 				let asyncView = <IAsync>this._view;
 				if (asyncView.isReady == false) {
 					if (this._hasProgress) {
@@ -170,17 +171,10 @@ module mvc {
 				}
 			}
 			this.viewReadyHandle();
-
-			if (this._view.isShow) {
-				this.stageHandle(new EventX(EventX.ADDED_TO_STAGE));
-			}
-			this.bindSetViewEvent(this._view, true);
-
 			if (this._model == null) {
 				this.preMediatorReadyHandle();
 				return;
 			}
-
 
 			let asyncModel = this._model as IAsync;
 			if (asyncModel.isReady == false) {
@@ -217,17 +211,13 @@ module mvc {
 			this.mediatorReadyHandle();
 			//DebugX.Log("mediator:{0} ready!",this.name);
 			this._isReady = true;
-			if (this._view.isShow) {
-				this.facade.registerEventInterester(this, InjectEventType.Show, true);
-				if (this._isAwake == false) {
-					this._isAwake = true;
-					this.preAwaken();
-				}
-			}
-
-
+			
 			this.dispatchReayHandle();
 			this.facade.simpleDispatch(EventX.MEDIATOR_READY, this.name);
+
+			if (this._view.isShow) {
+				this.stageHandle(new EventX(EventX.ADDED_TO_STAGE));
+			}
 		}
 
 		protected mediatorReadyHandle() {

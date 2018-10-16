@@ -1,7 +1,11 @@
 module mvc {
+	export class ListenBox{
+		constructor(public handle: (e: EventX) => void,public thisObj:any){}
+	}
+
 	export abstract class AbstractMVHost extends egret.EventDispatcher implements IMVCHost, IEventInterester, IAsync, egret.IEventDispatcher {
 		public __eventInteresting:{[index:string]:Array<mvc.InjectEventTypeHandle>};
-		protected static ReadyEventX: EventX = new EventX(EventX.READY);
+		
 		protected _name: string;
 		public get name() {
 			return this._name;
@@ -9,7 +13,7 @@ module mvc {
 
 		protected facade: IFacade = Facade.GetInstance();
 		protected _isReady: boolean = false;
-		protected readyHandle: Array<(e: EventX) => void>;
+		protected readyHandle: ListenBox[];
 
 		public get isReady(): boolean {
 			return this._isReady;
@@ -25,21 +29,22 @@ module mvc {
 			
 		}
 
-		public addReayHandle(handle: (e: EventX) => void): boolean {
+		public addReayHandle(handle: (e: EventX) => void,thisObj?:any): boolean {
 			if (this._isReady) {
-				handle(AbstractMVHost.ReadyEventX);
+				handle(EventX.ReadyEventX);
 				return true;
 			}
 
 			if (!this.readyHandle) {
-				this.readyHandle = new Array<(e: EventX) => void>();
+				this.readyHandle = new Array<ListenBox>();
 			} else {
-				let index = this.readyHandle.indexOf(handle);
-				if (index != -1) {
-					return false;
+				for(let item of this.readyHandle){
+					if(item.handle==handle){
+						return false;
+					}
 				}
 			}
-			this.readyHandle.push(handle);
+			this.readyHandle.push(new ListenBox(handle,thisObj));
 			return true;
 		}
 		public removeReayHandle(handle: (e: EventX) => void): boolean {
@@ -48,9 +53,11 @@ module mvc {
 			}
 
 			if (this.readyHandle) {
-				let index = this.readyHandle.indexOf(handle);
-				if (index != -1) {
-					this.readyHandle.splice(index, 1);
+				let len=this.readyHandle.length;
+				for(let i=0;i<len;i++){
+					if(this.readyHandle[i].handle=handle){
+						this.readyHandle.splice(i, 1);
+					}
 					return true;
 				}
 			}
@@ -59,15 +66,16 @@ module mvc {
 		}
 
 		protected dispatchReayHandle() {
-			let e=AbstractMVHost.ReadyEventX;
+		
 			if (this.readyHandle != null) {
 				this.readyHandle.forEach((val, index, list) => {
-					val.apply(null, e);
+					val.handle.call(val.thisObj, EventX.ReadyEventX);
 				});
 				//todo clear;
-				this.readyHandle = null;
+				this.readyHandle.length=0;
+				this.readyHandle=null;
 			}
-			this.dispatchEvent(e);
+			this.dispatchEvent(EventX.ReadyEventX);
 		}
 
 		public getEventInterests(type: InjectEventType): Array<InjectEventTypeHandle> {

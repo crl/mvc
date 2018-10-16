@@ -5,7 +5,7 @@ module mvc {
 			super();
 		}
 		protected _parent: egret.DisplayObjectContainer;
-		protected readyHandle:Array<(e:EventX)=>void>;
+		protected readyHandle: ListenBox[];
 
 		protected _uri: string;
 		protected _resizeable: boolean = false;
@@ -36,51 +36,51 @@ module mvc {
 		}
 
 
-		public addReayHandle(handle:(e:EventX)=>void):boolean{
-			 if (this._isReady)
-            {
-                handle(AbstactPanel.ReadyEventX);
-                return true;
-            }
+		public addReayHandle(handle: (e: EventX) => void,thisObj?:any): boolean {
+			if (this._isReady) {
+				handle(EventX.ReadyEventX);
+				return true;
+			}
 
-			if(!this.readyHandle){
-				this.readyHandle=new Array<(e:EventX)=>void>();
-			}else{
-				let index=this.readyHandle.indexOf(handle);
-				if(index!=-1){
-					return false;
+			if (!this.readyHandle) {
+				this.readyHandle = new Array<ListenBox>();
+			} else {
+				for(let item of this.readyHandle){
+					if(item.handle==handle){
+						return false;
+					}
 				}
 			}
-			this.readyHandle.push(handle);
-            return true;
+			this.readyHandle.push(new ListenBox(handle,thisObj));
+			return true;
 		}
-		public removeReayHandle(handle:(e:EventX)=>void):boolean
-        {
-            if (this._isReady)
-            {
-                return false;
-            }
+		public removeReayHandle(handle: (e: EventX) => void): boolean {
+			if (this._isReady) {
+				return false;
+			}
 
-			if(this.readyHandle){
-				let index=this.readyHandle.indexOf(handle);
-				if(index!=-1){
-					this.readyHandle.splice(index,1);
+			if (this.readyHandle) {
+				let len=this.readyHandle.length;
+				for(let i=0;i<len;i++){
+					if(this.readyHandle[i].handle=handle){
+						this.readyHandle.splice(i, 1);
+					}
 					return true;
 				}
 			}
-    
-            return false;
-        }
 
-		protected dispatchReayHandle(){
-			let e=AbstactPanel.ReadyEventX;
-			
+			return false;
+		}
+
+		protected dispatchReayHandle() {
+			let e=EventX.ReadyEventX;
 			if (this.readyHandle != null) {
 				this.readyHandle.forEach((val, index, list) => {
-					val.apply(null, e);
+					val.handle.call(val.thisObj, e);
 				});
 				//todo clear;
-				this.readyHandle = null;
+				this.readyHandle.length=0;
+				this.readyHandle=null;
 			}
 			this.dispatchEvent(e);
 		}
