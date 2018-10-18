@@ -1,8 +1,4 @@
 module mvc {
-	export class ListenerItemBox{
-		constructor(public handle: (e: EventX) => void,public thisObj:any){}
-	}
-
 	export abstract class AbstractMVHost extends egret.EventDispatcher implements IMVCHost, IEventInterester, IAsync, egret.IEventDispatcher {
 		public __eventInteresting:{[index:string]:Array<mvc.InjectEventTypeHandle>};
 		
@@ -13,7 +9,7 @@ module mvc {
 
 		protected facade: IFacade = Facade.GetInstance();
 		protected _isReady: boolean = false;
-		protected readyHandle: ListenerItemBox[];
+		protected readyHandle: ListenerItemBox<EventX>[];
 
 		public get isReady(): boolean {
 			return this._isReady;
@@ -36,7 +32,7 @@ module mvc {
 			}
 
 			if (!this.readyHandle) {
-				this.readyHandle = new Array<ListenerItemBox>();
+				this.readyHandle = new Array<ListenerItemBox<EventX>>();
 			} else {
 				for(let item of this.readyHandle){
 					if(item.handle==handle){

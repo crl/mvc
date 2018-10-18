@@ -1,35 +1,58 @@
 interface IStream {
 	readonly code: number;
 }
+interface IMessage {
 
-class ListenerItem {
-	public handle: (e: IStream) => void;
-	public thisObj: any;
-	public constructor(handle: (e: IStream) => void, thisObj: any) {
-		this.handle = handle;
-		this.thisObj = thisObj;
-	}
-	public call(e: IStream) {
-		this.handle.call(this.thisObj, e);
-	}
 }
 
-class SocketX extends egret.EventDispatcher {
-	protected static instance: SocketX;
-	protected cmds: { [index: number]: Array<ListenerItem> } = {};
+interface ISocketSender extends egret.IEventDispatcher {
+	send(msg: IStream):boolean;
+	readonly connected: boolean;
+	close():void;
+}
 
-	public static GetInstance(): SocketX {
+
+class SocketX {
+	protected static instance: SocketX;
+	protected static sender: ISocketSender;
+	protected static cmds: { [index: number]: Array<ListenerItemBox<IStream>> } = {};
+
+	private static GetInstance(): SocketX {
 		if (SocketX.instance == null) {
 			SocketX.instance = new SocketX();
 		}
 		return SocketX.instance;
 	}
+	public static bind(sender: ISocketSender) {
+		SocketX.GetInstance();
+		SocketX.sender = sender;
+	}
 
-	public addListener(code: number, handler: (e: IStream) => void, thisObj: any): boolean {
-		let list = this.cmds[code];
+	public static Send(msg: IStream):boolean {
+		return this.sender.send(msg);
+	}
+
+	public static get IsConnected() {
+		return SocketX.sender.connected;
+	}
+	public static Close(){
+		SocketX.sender.close();
+	}
+
+	public static AddEventListener(type:string, listener:(EventX)=>void,thisObj?:any,priority?:number)
+	{
+		SocketX.sender.addEventListener(type,listener,thisObj,false,priority);
+	}
+	public static RemoveEventListener(type:string, listener:(EventX)=>void,thisObj?:any)
+	{
+		SocketX.sender.removeEventListener(type,listener,thisObj,false);
+	}
+
+	public static AddListener(code: number, handler: (e: IStream) => void, thisObj: any): boolean {
+		let list = SocketX.cmds[code];
 		if (!list) {
-			list = new Array<ListenerItem>();
-			this.cmds[code] = list;
+			list = new Array<ListenerItemBox<IStream>>();
+			SocketX.cmds[code] = list;
 		}
 
 		for (let item of list) {
@@ -38,21 +61,14 @@ class SocketX extends egret.EventDispatcher {
 			}
 		}
 
-		let item = new ListenerItem(handler, thisObj);
+		let item = new ListenerItemBox(handler, thisObj);
 		list.push(item);
 		return true;
 	}
-	public static AddListener(code: number, handler: (e: IStream) => void, thisObj: any): boolean {
-		return SocketX.GetInstance().addListener(code, handler, thisObj);
-	}
-	public static Dispatch(e: IStream): boolean {
-		return SocketX.GetInstance().dispatch(e);
-	}
-
-	public dispatch(e: IStream): boolean {
-		let list = this.cmds[e.code];
+	public static Dispatch(msg: IStream): boolean {
+		let list = SocketX.cmds[msg.code];
 		for (let item of list) {
-			item.call(e);
+			item.handle.call(item.thisObj, msg);
 		}
 		return true;
 	}

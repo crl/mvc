@@ -5,7 +5,7 @@ module mvc {
 			super();
 		}
 		protected _parent: egret.DisplayObjectContainer;
-		protected readyHandle: ListenerItemBox[];
+		protected readyHandle: ListenerItemBox<EventX>[];
 
 		protected _uri: string;
 		protected _resizeable: boolean = false;
@@ -43,7 +43,7 @@ module mvc {
 			}
 
 			if (!this.readyHandle) {
-				this.readyHandle = new Array<ListenerItemBox>();
+				this.readyHandle = new Array<ListenerItemBox<EventX>>();
 			} else {
 				for(let item of this.readyHandle){
 					if(item.handle==handle){
