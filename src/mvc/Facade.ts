@@ -52,15 +52,15 @@ namespace mvc {
 			this.model.register(proxy);
 		}
 
-		public registerCommand<T>(eventType: string, commandClassRef: new () => T): boolean {
+		public registerCommand<T>(eventType: string, c: new () => T): boolean {
 			if (this.commandsMap[eventType]) {
 
 				return false;
 			}
-			this.commandsMap[eventType] = commandClassRef;
+			this.commandsMap[eventType] = c;
 			return true;
 		}
-		public removeCommand<T>(eventType: string, commandClassRef: new () => T): boolean {
+		public removeCommand<T>(eventType: string, c: new () => T): boolean {
 			if (this.commandsMap[eventType]) {
 
 				delete this.commandsMap[eventType]

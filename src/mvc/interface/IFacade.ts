@@ -29,10 +29,10 @@ namespace mvc {
 		/**
 		 * 
 		 * @param eventType 注册事件
-		 * @param commandClassRef 事件独立处理类
+		 * @param c 事件独立处理类
 		 */
-		registerCommand<T>( eventType:string, commandClassRef:new()=>T):boolean
-		removeCommand<T>( eventType:string, commandClassRef:new()=>T):boolean
+		registerCommand<T>( eventType:string, c:new()=>T):boolean
+		removeCommand<T>( eventType:string, c:new()=>T):boolean
 		hasCommand(eventType:string):boolean;
 		
 		/**
