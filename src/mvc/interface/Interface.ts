@@ -37,6 +37,10 @@ namespace mvc {
 		simpleDispatch(type: string, data: any): boolean
 	}
 
+	export interface ICommand {
+		execute(e: EventX): void;
+	}
+
 
 	export interface IInject {
 		inject(target:IInjectable):IInjectable;

@@ -1,7 +1,7 @@
 namespace mvc {
 	export class Facade extends egret.EventDispatcher implements IFacade {
 		protected mvcInjectLock: { [index: string]: any } = {};
-
+		protected commandsMap: { [index: string]: any } = {};
 		protected injecter: IInject;
 		protected view: IView;
 		protected model: IView;
@@ -39,8 +39,8 @@ namespace mvc {
 					mediator["_name"] = mediatorName;
 					this.__unSafeInjectInstance(mediator, mediatorName);
 					this.registerMediator(mediator);
-				}else{
-					console.warn(mediatorName +" isn't registed!");
+				} else {
+					console.warn(mediatorName + " isn't registed!");
 				}
 			}
 			return mediator;
@@ -50,6 +50,26 @@ namespace mvc {
 		}
 		public registerProxy(proxy: IProxy) {
 			this.model.register(proxy);
+		}
+
+		public registerCommand<T>(eventType: string, commandClassRef: new () => T): boolean {
+			if (this.commandsMap[eventType]) {
+
+				return false;
+			}
+			this.commandsMap[eventType] = commandClassRef;
+			return true;
+		}
+		public removeCommand<T>(eventType: string, commandClassRef: new () => T): boolean {
+			if (this.commandsMap[eventType]) {
+
+				delete this.commandsMap[eventType]
+				return true;
+			}
+			return false;
+		}
+		public hasCommand(eventType: string): boolean {
+			return this.commandsMap[eventType] != null;
 		}
 
 
@@ -68,7 +88,7 @@ namespace mvc {
 			return this.mvcInjectLock[className];
 		}
 
-		protected routerCreateInstance(type: new()=>any): any {
+		protected routerCreateInstance(type: new () => any): any {
 			return new type();
 		}
 
@@ -139,7 +159,7 @@ namespace mvc {
 			return ins;
 		}
 
-		public toggleMediatorByName(mediatorName: string, type: number=-1): IMediator {
+		public toggleMediatorByName(mediatorName: string, type: number = -1): IMediator {
 			if (!mediatorName) {
 				return null;
 			}
@@ -198,24 +218,24 @@ namespace mvc {
 			return mediator;
 		}
 
-		public toggleMediator<T extends IMediator>(c: new () => T, type: number=-1): T {
+		public toggleMediator<T extends IMediator>(c: new () => T, type: number = -1): T {
 			let fullClassName = egret.getQualifiedClassName(c);
 			let aliasName = fullClassName.split(".").pop();
-			let t=<T>this.toggleMediatorByName(aliasName, type);
-			if(t==null){
+			let t = <T>this.toggleMediatorByName(aliasName, type);
+			if (t == null) {
 				Singleton.RegisterClass(c, aliasName);
-				t=<T>this.toggleMediatorByName(aliasName, type);
+				t = <T>this.toggleMediatorByName(aliasName, type);
 			}
 
 			return t;
 		}
 
-		public registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind: boolean=true) {
+		public registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind: boolean = true) {
 			if (eventInterester == null) {
 				return;
 			}
 			let eventInterests = eventInterester.getEventInterests(injectEventType);
-			if(!eventInterests){
+			if (!eventInterests) {
 				return;
 			}
 
@@ -237,15 +257,21 @@ namespace mvc {
 
 
 		public static SimpleDispatch(eventType: string, data?: any): boolean {
-			return Facade.GetInstance().simpleDispatch(eventType,data);
+			return Facade.GetInstance().simpleDispatch(eventType, data);
 		}
 		public simpleDispatch(eventType: string, data?: any): boolean {
 			if (!this.hasEventListener(eventType)) {
 				return false;
 			}
-
+			
 			//从事件池中取一个项，用于事件发布,发布完后，再压进事件池;
 			let e = EventX.FromPool(eventType, data);
+			let commandClassRef = this.commandsMap[eventType];
+			if (commandClassRef) {
+				var command = <ICommand>new commandClassRef();
+				command.execute(e);
+			}
+
 			let b = this.dispatchEvent(e);
 			EventX.ToPool(e);
 
@@ -253,4 +279,4 @@ namespace mvc {
 		}
 	}
 }
-const Facade=mvc.Facade;
+const Facade = mvc.Facade;
