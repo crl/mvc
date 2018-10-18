@@ -1,6 +1,6 @@
 module mvc {
 	export abstract class AbstractMVHost extends egret.EventDispatcher implements IMVCHost, IEventInterester, IAsync, egret.IEventDispatcher {
-		public __eventInteresting:{[index:string]:Array<mvc.InjectEventTypeHandle>};
+		__eventInteresting:{[index:string]:Array<mvc.InjectEventTypeHandle>};
 		
 		protected _name: string;
 		public get name() {
@@ -43,7 +43,7 @@ module mvc {
 			this.readyHandle.push(new ListenerItemBox(handle,thisObj));
 			return true;
 		}
-		public removeReayHandle(handle: (e: EventX) => void): boolean {
+		public removeReayHandle(handle: (e: EventX) => void,thisObj?:any): boolean {
 			if (this._isReady) {
 				return false;
 			}
@@ -51,7 +51,8 @@ module mvc {
 			if (this.readyHandle) {
 				let len=this.readyHandle.length;
 				for(let i=0;i<len;i++){
-					if(this.readyHandle[i].handle=handle){
+					let item=this.readyHandle[i];
+					if(item.handle==handle && item.thisObj==thisObj){
 						this.readyHandle.splice(i, 1);
 					}
 					return true;
@@ -67,7 +68,6 @@ module mvc {
 				this.readyHandle.forEach((val, index, list) => {
 					val.handle.call(val.thisObj, EventX.ReadyEventX);
 				});
-				//todo clear;
 				this.readyHandle.length=0;
 				this.readyHandle=null;
 			}

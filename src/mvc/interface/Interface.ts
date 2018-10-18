@@ -4,6 +4,9 @@ namespace mvc {
     }
 
 	export interface IEventInterester {
+		/**
+		 * @property index:InjectEventType;
+		 */
 		__eventInteresting:{[index:string]:Array<mvc.InjectEventTypeHandle>};
 		getEventInterests(type: InjectEventType): Array<InjectEventTypeHandle>;
 	}
