@@ -1,4 +1,3 @@
-debugger
 class Main extends egret.DisplayObjectContainer {
 
     public constructor() {
