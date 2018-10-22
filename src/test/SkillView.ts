@@ -6,8 +6,13 @@ class SkillView extends BagView{
 		super.create();
 	}
 
+	@MVC
+	private skillModel:gameSDK.BagProxy;
+
 	protected tapHandle(e:egret.TouchEvent){
 
 		Facade.ToggleMediator(gameSDK.BagMediator);
+
+		this.skillModel.fuck();
 	}
 }

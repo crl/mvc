@@ -1,3 +1,4 @@
+debugger
 class Main extends egret.DisplayObjectContainer {
 
     public constructor() {
@@ -29,7 +30,8 @@ class Main extends egret.DisplayObjectContainer {
 
     private async runGame() {
         UILocator.Init(this);
-        //mvc.Singleton.RegisterClass(BagMediator);
+        //Facade.RegisterModule(BagMediator,BagView,gameSDK.BagProxy);
+
         let bagMediator:gameSDK.BagMediator=Facade.GetMediator(gameSDK.BagMediator);
         bagMediator.toggleSelf(1);
         bagMediator.fuck();

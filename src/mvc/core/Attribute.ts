@@ -5,7 +5,10 @@ const enum InjectEventType {
     //proxy event
     Proxy,
 }
-
+function TT(a:any){
+    return function (target: any, propertyKey: string) {
+    }
+}
 // 装饰器
 let MVC = function (target: any, propertyKey: string) {
     let propertyType = Reflect.getMetadata('design:type', target, propertyKey);

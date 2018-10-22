@@ -1,5 +1,14 @@
 namespace mvc {
 	export interface IFacade extends INotifier {
+		
+		/**
+		 /**
+		 * h5特有的注册类 操作(因为js代码的 初始化顺序关系,可能会有互相依赖项,不能直接由反射来操作,所以注册了关系用于直接初始化)
+		 * @param mediatorClass 
+		 * @param proxyClass 
+		 * @param viewClass 
+		 */
+		//registerModule<M extends IMediator,P extends IProxy,V extends IPanel>(mediatorClass:new()=>M,proxyClass:new()=>P,viewClass:new()=>V):boolean;
 
 		/**
 		 * 

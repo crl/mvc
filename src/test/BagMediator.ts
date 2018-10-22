@@ -1,14 +1,11 @@
-///<reference path="BagView.ts" />
-///<reference path="SkillProxy.ts" />
-///<reference path="BagProxy.ts" />
-
 namespace gameSDK {
+	
 	export class BagMediator extends mvc.Mediator {
 		@MVC
-		public view: BagView;
+		public view:BagView;
 
 		@MVC
-		private proxy:gameSDK.BagProxy;
+		private proxy:BagProxy;
 
 		public fuck() {
 			console.log("call:",this.name,'fuck');

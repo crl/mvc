@@ -1,8 +1,12 @@
-class BagView extends mvc.AbstactPanel {
+class BagView extends mvc.AbstactPanel implements mvc.IInjectable {
 
 	private s:egret.Sprite;
 	protected color:number=0;
 	protected tx:number=0;
+
+	@MVC
+	private bagModel:gameSDK.BagProxy;
+
 	public constructor() {
 		super();
 		this.create();
@@ -35,6 +39,6 @@ class BagView extends mvc.AbstactPanel {
 
 
 	public fuck(){
-		console.log("call:",this.name,'fuck');
+		console.log("call:",this.name,'fuck',this.bagModel.name);		
 	}
 }

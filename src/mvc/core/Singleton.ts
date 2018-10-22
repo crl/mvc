@@ -31,7 +31,11 @@ namespace mvc {
 			return Singleton.uniqueMap[aliasName]!=null;
 		}
 
-		public static __GetOneInstance(aliasName:string):any
+        /**
+         * 取出一个实例(如果不存在 创建一个)
+         * @param aliasName 类别名/完整类名
+         */
+		public static __GetOrCreateOneInstance(aliasName:string):any
         {
             if (!aliasName)
             {
@@ -62,6 +66,10 @@ namespace mvc {
             return new c();
         }
 
+        /**
+         * 取得一个单例
+         * @param aliasName 别名/完整类名
+         */
 		public static GetInstance(aliasName:string):any
         {
             if (!aliasName)
@@ -88,7 +96,11 @@ namespace mvc {
             return ins;
         }
 
-		public static GetClass(aliasName: string): any {
+        /**
+         * 用别名 取得一个类型
+         * @param aliasName 别名/完整类名
+         */
+		public static GetClass(aliasName: string): new()=>any {
 			if (!aliasName) {
 				console.error("aliasName is empty:" + aliasName);
 				return null;

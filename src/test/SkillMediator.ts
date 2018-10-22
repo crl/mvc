@@ -1,7 +1,3 @@
-///<reference path="SkillView.ts" />
-///<reference path="SkillProxy.ts" />
-///<reference path="BagProxy.ts" />
-
 class SkillMediator extends mvc.Mediator {
 	@MVC
 	private view: SkillView;

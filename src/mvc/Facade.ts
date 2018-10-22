@@ -255,6 +255,10 @@ namespace mvc {
 			}
 		}
 
+		public static RegisterModule<M extends IMediator,P extends IProxy,V extends IPanel>(mediatorClass:new()=>M,proxyClass:new()=>P,viewClass:new()=>V){
+		}
+		public registerModule<M extends IMediator,P extends IProxy,V extends IPanel>(mediatorClass:new()=>M,proxyClass:new()=>P,viewClass:new()=>V){
+		}
 
 		public static SimpleDispatch(eventType: string, data?: any): boolean {
 			return Facade.GetInstance().simpleDispatch(eventType, data);

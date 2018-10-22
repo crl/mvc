@@ -13,6 +13,9 @@ module mvc {
 		}
 	}
 
+	/**
+	 * 注入管理类
+	 */
 	export class MVCInject implements IInject {
 		private static PROXY_FULLNAME: string = "mvc.IProxy";
 		private static MEDIATOR_FULLNAME: string = "mvc.IMediator";
@@ -113,13 +116,16 @@ module mvc {
 			}
 
 			let aliasName = fullClassName.split(".").pop();
-			let isProxy = ReflectUtils.IsSubclassOf(classType, MVCInject.PROXY_FULLNAME);
-			let isMediator = ReflectUtils.IsSubclassOf(classType, MVCInject.MEDIATOR_FULLNAME);
+			let isProxy = egret.is(classType, MVCInject.PROXY_FULLNAME);
+			let isMediator = egret.is(classType, MVCInject.MEDIATOR_FULLNAME);
 			if (isProxy || isMediator) {
 				Singleton.RegisterClass(classType, aliasName);
 			} else {
-				//todo router;
-				return new classType();
+				let ins= new classType();
+				if(egret.is(classType,MVCInject.INJECTABLE_FULLNAME)){
+					ins = this.inject(ins);
+				}
+				return ins;
 			}
 
 			if (isMediator && this.facade.hasMediatorByName(aliasName)) {
@@ -130,15 +136,15 @@ module mvc {
 
 			let ins = this.facade.getInjectLock(aliasName);
 			if (!ins) {
-				ins = Singleton.__GetOneInstance(aliasName);
+				ins = Singleton.__GetOrCreateOneInstance(aliasName);
 				if (egret.is(ins, MVCInject.INJECTABLE_FULLNAME)) {
 					ins = this.inject(ins);
 				}
-				if (egret.is(ins, MVCInject.MEDIATOR_FULLNAME)) {
+				if (isMediator) {
 					ins["_name"] = aliasName;
 					this.facade.registerMediator(<IMediator>ins);
 				}
-				else if (egret.is(ins, MVCInject.PROXY_FULLNAME)) {
+				else if (isProxy) {
 					ins["_name"] = aliasName;
 					this.facade.registerProxy(<IProxy>ins);
 				}
