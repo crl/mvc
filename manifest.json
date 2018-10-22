@@ -11,6 +11,7 @@
 	"game": [
 		"bin-debug/mvc/core/EventX.js",
 		"bin-debug/mvc/core/AbstractMVHost.js",
+		"bin-debug/mvc/core/Attribute.js",
 		"bin-debug/foundation/AbstactPanel.js",
 		"bin-debug/mvc/Mediator.js",
 		"bin-debug/mvc/Proxy.js",
