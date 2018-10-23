@@ -1,3 +1,4 @@
+/// <reference path="core/AbstractMVHost.ts" />
 module mvc {
 	export abstract class Mediator extends AbstractMVHost implements IMediator {
 

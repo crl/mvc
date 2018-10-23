@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "outDir": "bin-debug",
+        "outFile": "bin-debug/mvc.js",
         "sourceMap": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,

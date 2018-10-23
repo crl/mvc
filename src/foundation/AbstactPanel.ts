@@ -1,6 +1,5 @@
 module mvc {
 	export class AbstactPanel extends egret.DisplayObjectContainer implements IPanel {
-		protected static ReadyEventX:EventX = new EventX(EventX.READY);
 		public constructor() {
 			super();
 		}
