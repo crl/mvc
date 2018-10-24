@@ -8,7 +8,6 @@ class SkillMediator extends mvc.Mediator {
 	@MVC
 	private bagProxy: gameSDK.BagProxy;
 
-
 	public fuck() {
 		console.log("call:", this.name, 'fuck');
 		this.view.fuck();
@@ -16,6 +15,7 @@ class SkillMediator extends mvc.Mediator {
 	}
 	@CMD(1920)
 	public cmd(e: IStream) {
+		this.bagProxy.fuck();
 		console.log("cmd:", this.name, e.code);
 	}
 
