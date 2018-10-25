@@ -8,6 +8,8 @@ class BagView extends mvc.AbstactPanel implements mvc.IInjectable {
 	@MVC
 	private bagModel:gameSDK.BagProxy;
 
+	@MVC
+	private view:gameSDK.SkillProxy;
 	public constructor() {
 		super();
 		this.create();

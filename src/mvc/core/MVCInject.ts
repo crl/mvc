@@ -130,9 +130,7 @@ module mvc {
             return cls;
         }
         public inject(target: IInjectable): IInjectable {
-
             let type = Object.getPrototypeOf(target);
-
             while (type) {
                 for (let item of MVCInject.injectMapping) {
                     if (item.classPrototype == type) {
@@ -140,6 +138,7 @@ module mvc {
                         break;
                     }
                 }
+                //找基类注入
                 type = Object.getPrototypeOf(type);
             }
             return target;
@@ -157,9 +156,9 @@ module mvc {
                     continue;
                 }
                 target[key] = o;
-                if (key == "view") {
+                if (key == "view" && ("setView" in target)) {
                     (<IMediator>target).setView(o);
-                } else if (key == "proxy") {
+                } else if (key == "proxy" && ("setProxy" in target)) {
                     (<IMediator>target).setProxy(o);
                 }
             }
