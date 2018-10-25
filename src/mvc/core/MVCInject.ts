@@ -71,18 +71,18 @@ module mvc {
             classInjectData.propertys[property] = 1;
         }
 
-        public static AddCMD(classType: Function, cmd: number, handle: (e: IStream) => void) {
+        public static AddCMD(classPrototype: Function, cmd: number, handle: (e: IStream) => void) {
 
             let classInjectData = null;
             for (let item of MVCInject.injectMapping) {
-                if (item.classPrototype == classType) {
+                if (item.classPrototype == classPrototype) {
                     classInjectData = item;
                     break;
                 }
             }
 
             if (!classInjectData) {
-                classInjectData = new ClassInjectData(classType);
+                classInjectData = new ClassInjectData(classPrototype);
                 MVCInject.injectMapping.push(classInjectData);
             }
 
