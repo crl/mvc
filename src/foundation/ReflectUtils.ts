@@ -1,4 +1,5 @@
 class ReflectUtils {
+   
 
 	public static IsSubclassOf(type:new()=>any, superType: any): boolean {
 		let r=type.prototype;

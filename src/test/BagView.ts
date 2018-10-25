@@ -29,7 +29,7 @@ class BagView extends mvc.AbstactPanel implements mvc.IInjectable {
 		tf.x=this.tx;
 		tf.width=this.s.width;
 		tf.height=100;
-		tf.text="inject:"+egret.getQualifiedClassName(this);
+		tf.text="inject:"+mvc.Singleton.GetClassFullName(Object.getPrototypeOf(this));
 
 		
 		this.addChild(this.s);

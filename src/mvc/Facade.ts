@@ -25,8 +25,7 @@ namespace mvc {
 			return this.view.get(mediatorName) != null;
 		}
 		public hasMediator<T extends IMediator>(c: new () => T): boolean {
-			let fullClassName = egret.getQualifiedClassName(c);
-			let aliasName = fullClassName.split(".").pop();
+			let aliasName = Singleton.GetAliasName(c);
 			return this.hasMediatorByName(aliasName);
 		}
 
@@ -101,9 +100,7 @@ namespace mvc {
 
 
 		public getMediator<T extends IMediator>(c: new () => T): T {
-			let fullClassName = egret.getQualifiedClassName(c);
-			let aliasName = fullClassName.split(".").pop();
-
+			let aliasName =  Singleton.GetAliasName(c);
 			let ins = <T>this.getMediatorByName(aliasName);
 			if (!ins) {
 				Singleton.RegisterClass(c, aliasName);
@@ -129,8 +126,7 @@ namespace mvc {
 			return this.model.get(proxyName) != null;
 		}
 		public hasProxy<T extends IProxy>(c: new () => T): boolean {
-			let fullClassName = egret.getQualifiedClassName(c);
-			let aliasName = fullClassName.split(".").pop();
+			let aliasName = Singleton.GetAliasName(c);
 			return this.hasProxyByName(aliasName);
 		}
 
@@ -147,9 +143,7 @@ namespace mvc {
 			return proxy;
 		}
 		public getProxy<T extends IProxy>(c: new () => T): T {
-			let fullClassName = egret.getQualifiedClassName(c);
-			let aliasName = fullClassName.split(".").pop();
-
+			let aliasName = Singleton.GetAliasName(c);
 			let ins = <T>this.getProxyByName(aliasName);
 			if (!ins) {
 				Singleton.RegisterClass(c, aliasName);
@@ -219,8 +213,7 @@ namespace mvc {
 		}
 
 		public toggleMediator<T extends IMediator>(c: new () => T, type: number = -1): T {
-			let fullClassName = egret.getQualifiedClassName(c);
-			let aliasName = fullClassName.split(".").pop();
+			let aliasName = Singleton.GetAliasName(c);
 			let t = <T>this.toggleMediatorByName(aliasName, type);
 			if (t == null) {
 				Singleton.RegisterClass(c, aliasName);
@@ -253,11 +246,6 @@ namespace mvc {
 					}
 				}
 			}
-		}
-
-		public static RegisterModule<M extends IMediator,P extends IProxy,V extends IPanel>(mediatorClass:new()=>M,proxyClass:new()=>P,viewClass:new()=>V){
-		}
-		public registerModule<M extends IMediator,P extends IProxy,V extends IPanel>(mediatorClass:new()=>M,proxyClass:new()=>P,viewClass:new()=>V){
 		}
 
 		public static SimpleDispatch(eventType: string, data?: any): boolean {

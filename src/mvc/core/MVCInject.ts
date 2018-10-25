@@ -31,15 +31,15 @@ module mvc {
 		 */
         public static InitMVCInjectDef(o: { [index: string]: string[] }) {
 
-            for (const key in o) {
-                let li = o[key];
-                let map = MVCInject.injectDefMapping[key];
+            for (const fullClassName in o) {
+                let li = o[fullClassName];
+                let map = MVCInject.injectDefMapping[fullClassName];
                 if (map == null) {
                     map = {};
-                    MVCInject.injectDefMapping[key] = map;
-                    let shortName = key.split(".").pop();
-                    if (shortName != key) {
-                        MVCInject.injectShortNameMapping[shortName] = key;
+                    MVCInject.injectDefMapping[fullClassName] = map;
+                    let aliasName =Singleton.GetAliasName(fullClassName);
+                    if (aliasName != fullClassName) {
+                        MVCInject.injectShortNameMapping[aliasName] = fullClassName;
                     }
                 }
 
@@ -138,7 +138,7 @@ module mvc {
                         break;
                     }
                 }
-                //找基类注入
+                //循环找基类注入
                 type = Object.getPrototypeOf(type);
             }
             return target;
@@ -173,12 +173,11 @@ module mvc {
 
         }
         protected autoMVC(classType: new () => any): any {
-            let fullClassName = egret.getQualifiedClassName(classType);
+            let fullClassName = Singleton.GetClassFullName(classType);
             if (Singleton.IsUnique(fullClassName)) {
                 return Singleton.GetInstance(fullClassName);
             }
-
-            let aliasName = fullClassName.split(".").pop();
+            let aliasName = Singleton.GetAliasName(fullClassName);
             let isProxy = ReflectUtils.IsSubclassOf(classType, Proxy);
             let isMediator = ReflectUtils.IsSubclassOf(classType, Mediator);
             if (isProxy || isMediator) {
