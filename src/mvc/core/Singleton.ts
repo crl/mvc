@@ -43,7 +43,11 @@ namespace mvc {
         * 完整的类路径
         * @param c 类
         */
-        static GetClassFullName(c: new () => any): string {
+        static GetClassFullName(c:any): string {
+            if (!c || typeof c != "object") {
+                //is new();
+            }
+
             //todo 先从注册列表中取;
             return egret.getQualifiedClassName(c);
         }
