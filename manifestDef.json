@@ -1,0 +1,20 @@
+{
+    "gameSDK.BagMediator": [
+        "view:BagView",
+        "proxy:BagProxy"
+    ],
+    "gameSDK.BagProxy": [
+        "skillProxy:SkillProxy"
+    ],
+    "BagView": [
+        "bagModel:gameSDK.BagProxy"
+    ],
+    "SkillMediator": [
+        "view:SkillView",
+        "proxy:gameSDK.SkillProxy",
+        "bagProxy:gameSDK.BagProxy"
+    ],
+    "SkillView": [
+        "skillModel:gameSDK.BagProxy"
+    ]
+}

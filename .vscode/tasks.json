@@ -1,33 +1,15 @@
 {
-    "version": "0.1.0",
-    "command": "egret",
-    "isShellCommand": true,
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
     "tasks": [
         {
-            "taskName": "build",
-            "showOutput": "always",
-            "args": [
-                "build",
-                "-sourcemap"
-            ],
-            "problemMatcher": "$tsc"
-        },
-        {
-            "taskName": "clean",
-            "showOutput": "always",
-            "args": [
-                "build",
-                "-e"
-            ],
-            "problemMatcher": "$tsc"
-        },
-        {
-            "taskName": "publish",
-            "showOutput": "always",
-            "args": [
-                "publish"
-            ],
-            "problemMatcher": "$tsc"
+            "label": "build",
+            "type": "typescript",
+            "tsconfig": "tsconfig.json",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }

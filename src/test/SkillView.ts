@@ -7,7 +7,7 @@ class SkillView extends BagView{
 	}
 
 	@MVC
-	private skillModel:gameSDK.BagProxy;
+	private skillModel:gameSDK.SkillProxy;
 
 	protected tapHandle(e:egret.TouchEvent){
 

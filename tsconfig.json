@@ -1,10 +1,9 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "outFile": "bin-debug/mvc.js",
+        "outDir": "bin-debug",
         "sourceMap": true,
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
         "lib": [
             "es5",
             "dom",
@@ -14,7 +13,6 @@
     },
     "include": [
         "src",
-        "libs",
-        "node_modules/reflect-metadata"
+        "libs"
     ]
 }

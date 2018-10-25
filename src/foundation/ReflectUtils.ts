@@ -1,16 +1,18 @@
 class ReflectUtils {
 
-	public static IsSubclassOf(instance: any, typeName: string|{new():any}): boolean {
-		var prototype = instance.prototype;
-		var types = prototype ? prototype.__types__ : null;
-		if (!types) {
-			return false;
-		}
-		if(typeof typeName =="string"){
-			return (types.indexOf(typeName) !== -1);
+	public static IsSubclassOf(type:new()=>any, superType: any): boolean {
+		let r=type.prototype;
+		while(r){
+			let p=Object.getPrototypeOf(r);
+			if(p===superType.prototype){
+				return true;
+			}
+			r=r.prototype;
 		}
 
-		let superTypeName=egret.getQualifiedClassName(typeName);
-		return (types.indexOf(superTypeName) !== -1);
+		return false;
+	}
+	public static IsSubClassInstanceOf(instance:any, superType: any): boolean {
+		return superType.isPrototypeOf(instance);
 	}
 }

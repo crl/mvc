@@ -7,6 +7,12 @@ namespace mvc {
 		private static __aliasMap: { [index: string]: string } = {};
 
 
+        public static RegisterMulitClass(...arg:Array<new ()=>any>){
+            for (const iterator of arg) {
+                if(iterator)Singleton.RegisterClass(iterator);
+            }
+        }
+
 		public static RegisterClass<T>(c: new () => T, aliasName?: string) {
 			let fullClassName =egret.getQualifiedClassName(c);
 			if (!aliasName) {

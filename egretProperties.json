@@ -20,10 +20,6 @@
     },
     {
       "name": "promise"
-    },
-    {
-      "name": "reflect",
-      "path": "node_modules/reflect-metadata"
     }
   ]
 }

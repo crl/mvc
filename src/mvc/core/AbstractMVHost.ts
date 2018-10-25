@@ -1,6 +1,7 @@
 module mvc {
 	export abstract class AbstractMVHost extends egret.EventDispatcher implements IMVCHost, IEventInterester, IAsync, egret.IEventDispatcher {
 		__eventInteresting:{[index:string]:Array<mvc.InjectEventTypeHandle>};
+		__injectable=true;
 		
 		protected _name: string;
 		public get name() {

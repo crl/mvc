@@ -48,6 +48,7 @@ namespace mvc {
 
 	///是否可注入
 	export interface IInjectable {
-
+		readonly __injectable:boolean; 
+		
 	}
 }

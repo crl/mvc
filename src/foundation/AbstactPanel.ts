@@ -1,5 +1,6 @@
 module mvc {
 	export class AbstactPanel extends egret.DisplayObjectContainer implements IPanel {
+		
 		public constructor() {
 			super();
 		}

@@ -3,6 +3,7 @@ class BagView extends mvc.AbstactPanel implements mvc.IInjectable {
 	private s:egret.Sprite;
 	protected color:number=0;
 	protected tx:number=0;
+	__injectable=true;
 
 	@MVC
 	private bagModel:gameSDK.BagProxy;

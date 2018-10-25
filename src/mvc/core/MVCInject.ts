@@ -1,156 +1,220 @@
 module mvc {
-	//不导出
-	class ClassInjectData {
-		public classType: Function;
-		public propertys: { [index: string]: any } = {};
+    //不导出
+    class ClassInjectData {
 
-		//typeEvents
-		public typeEventHandles: { [index: string]: Array<InjectEventTypeHandle> } = {};
-		//指令
-		public cmds: { [index: number]: Array<(e: IStream) => void> } = {};
-		public constructor(classType: Function) {
-			this.classType = classType;
-		}
-	}
+        public propertys: { [index: string]: any } = {};
+        //typeEvents
+        public typeEventHandles: { [index: string]: Array<InjectEventTypeHandle> } = {};
+        //指令
+        public cmds: { [index: number]: Array<(e: IStream) => void> } = {};
+        public constructor(public classPrototype: Function) {
+        }
+        /**
+         * 取得完整类名
+         */
+        getFullClassName(): any {
+            return this.classPrototype["constructor"]["name"];
+        }
+    }
 
 	/**
 	 * 注入管理类
 	 */
-	export class MVCInject implements IInject {
-		private static PROXY_FULLNAME: string = "mvc.IProxy";
-		private static MEDIATOR_FULLNAME: string = "mvc.IMediator";
-		private static INJECTABLE_FULLNAME: string = "mvc.IInjectable";
+    export class MVCInject implements IInject {
+        private static INJECTABLE_FULLNAME: string = "__injectable";
 
-		private static injectMapping: Array<ClassInjectData> = new Array<ClassInjectData>();
+        private static injectDefMapping: { [index: string]: { [index: string]: string } } = {};
+        private static injectShortNameMapping: { [index: string]: string } = {};
+		/**
+		 * 
+		 * @param o 导出的mvc注入数据
+		 */
+        public static InitMVCInjectDef(o: { [index: string]: string[] }) {
 
-		public static AddMVC(classType: Function, property: string, propertyType: Function) {
+            for (const key in o) {
+                let li = o[key];
+                let map = MVCInject.injectDefMapping[key];
+                if (map == null) {
+                    map = {};
+                    MVCInject.injectDefMapping[key] = map;
+                    let shortName = key.split(".").pop();
+                    if (shortName != key) {
+                        MVCInject.injectShortNameMapping[shortName] = key;
+                    }
+                }
 
-			let classInjectData = null;
+                for (const iterator of li) {
+                    let t = iterator.split(":");
+                    map[t[0]] = t[1];
+                }
+            }
+        }
 
-			for (let item of MVCInject.injectMapping) {
-				if (item.classType == classType) {
-					classInjectData = item;
-					break;
-				}
-			}
+        private static injectMapping: Array<ClassInjectData> = new Array<ClassInjectData>();
 
-			if (!classInjectData) {
-				classInjectData = new ClassInjectData(classType);
-				MVCInject.injectMapping.push(classInjectData);
-			}
+        public static AddMVC(classPrototype: Function, property: string) {
 
-			classInjectData.propertys[property] = propertyType;
-		}
+            let classInjectData: ClassInjectData = null;
 
-		public static AddCMD(classType: Function, cmd: number, handle: (e: IStream) => void) {
+            for (let item of MVCInject.injectMapping) {
+                if (item.classPrototype == classPrototype) {
+                    classInjectData = item;
+                    break;
+                }
+            }
 
-			let classInjectData = null;
-			for (let item of MVCInject.injectMapping) {
-				if (item.classType == classType) {
-					classInjectData = item;
-					break;
-				}
-			}
+            if (!classInjectData) {
+                classInjectData = new ClassInjectData(classPrototype);
+                MVCInject.injectMapping.push(classInjectData);
+            }
 
-			if (!classInjectData) {
-				classInjectData = new ClassInjectData(classType);
-				MVCInject.injectMapping.push(classInjectData);
-			}
+            classInjectData.propertys[property] = 1;
+        }
 
-			let list = classInjectData.cmds[cmd];
-			if (!list) {
-				list = new Array<(e: IStream) => void>();
-				classInjectData.cmds[cmd] = list;
-			}
-			if (list.indexOf(handle) == -1) {
-				list.push(handle);
-			}
-		}
+        public static AddCMD(classType: Function, cmd: number, handle: (e: IStream) => void) {
 
+            let classInjectData = null;
+            for (let item of MVCInject.injectMapping) {
+                if (item.classPrototype == classType) {
+                    classInjectData = item;
+                    break;
+                }
+            }
 
+            if (!classInjectData) {
+                classInjectData = new ClassInjectData(classType);
+                MVCInject.injectMapping.push(classInjectData);
+            }
 
-		private facade: IFacade;
-		public constructor(facade: IFacade) {
-			this.facade = facade;
-		}
+            let list = classInjectData.cmds[cmd];
+            if (!list) {
+                list = new Array<(e: IStream) => void>();
+                classInjectData.cmds[cmd] = list;
+            }
+            if (list.indexOf(handle) == -1) {
+                list.push(handle);
+            }
+        }
 
-		public inject(target: IInjectable): IInjectable {
+        private facade: IFacade;
+        public constructor(facade: IFacade) {
+            this.facade = facade;
+        }
 
-			let type = target["__proto__"].constructor;
-			for (let item of MVCInject.injectMapping) {
-				if (item.classType == type) {
-					this.doInject(item, target);
-					break;
-				}
-			}
-			return target;
-		}
+        private getInjectClassByDef(classInjectData: ClassInjectData, property: string): new () => any {
+            let fullClassName = classInjectData.getFullClassName();
+            let dic = MVCInject.injectDefMapping[fullClassName];
+            if (!dic) {
+                fullClassName = MVCInject.injectShortNameMapping[fullClassName];
+                dic = MVCInject.injectDefMapping[fullClassName];
+            }
+            if (!dic) {
+                return null;
+            }
+            let def = dic[property];
+            let cls = Singleton.GetClass(def);
+            if (cls == null) {
+                let nsList = fullClassName.split(".");
+                let len = nsList.length;
+				/**
+				 * 从后往前加名称空间(eg:game,lingyu.game,com.lingyu.game)
+				 */
+                for (let i = len - 2; i > -1; i--) {
+                    def = nsList[i] + "." + def;
+                    cls = Singleton.GetClass(def);
+                    if (cls) {
+                        break;
+                    }
+                }
+            }
+            return cls;
+        }
+        public inject(target: IInjectable): IInjectable {
 
-		protected doInject(classInjectData: ClassInjectData, target: IInjectable) {
-			for (let key in classInjectData.propertys) {
-				let o = this.autoMVC(classInjectData.propertys[key]);
-				if (!o) {
-					continue;
-				}
-				target[key] = o;
-				if (key == "view") {
-					(<IMediator>target).setView(o);
-				} else if (key == "proxy") {
-					(<IMediator>target).setProxy(o);
-				}
-			}
+            let type = Object.getPrototypeOf(target);
 
-			for (let cmd in classInjectData.cmds) {
-				let list = classInjectData.cmds[cmd];
+            while (type) {
+                for (let item of MVCInject.injectMapping) {
+                    if (item.classPrototype == type) {
+                        this.doInject(item, target);
+                        break;
+                    }
+                }
+                type = Object.getPrototypeOf(type);
+            }
+            return target;
+        }
 
-				for (let item of list) {
-					SocketX.AddListener(+cmd, item, target);
-				}
-			}
+        protected doInject(classInjectData: ClassInjectData, target: IInjectable) {
+            for (let key in classInjectData.propertys) {
+                let cls = this.getInjectClassByDef(classInjectData, key);
+                if (cls == null) {
+                    console.error(target, key, "注入的类型找不到:" + classInjectData.getFullClassName());
+                    continue;
+                }
+                let o = this.autoMVC(cls);
+                if (!o) {
+                    continue;
+                }
+                target[key] = o;
+                if (key == "view") {
+                    (<IMediator>target).setView(o);
+                } else if (key == "proxy") {
+                    (<IMediator>target).setProxy(o);
+                }
+            }
 
-		}
-		protected autoMVC(classType: any): any {
-			let fullClassName = egret.getQualifiedClassName(classType);
-			if (Singleton.IsUnique(fullClassName)) {
-				return Singleton.GetInstance(fullClassName);
-			}
+            for (let cmd in classInjectData.cmds) {
+                let list = classInjectData.cmds[cmd];
 
-			let aliasName = fullClassName.split(".").pop();
-			let isProxy = egret.is(classType, MVCInject.PROXY_FULLNAME);
-			let isMediator = egret.is(classType, MVCInject.MEDIATOR_FULLNAME);
-			if (isProxy || isMediator) {
-				Singleton.RegisterClass(classType, aliasName);
-			} else {
-				let ins= new classType();
-				if(egret.is(classType,MVCInject.INJECTABLE_FULLNAME)){
-					ins = this.inject(ins);
-				}
-				return ins;
-			}
+                for (let item of list) {
+                    SocketX.AddListener(+cmd, item, target);
+                }
+            }
 
-			if (isMediator && this.facade.hasMediatorByName(aliasName)) {
-				return this.facade.getMediatorByName(aliasName);
-			} else if (isProxy && this.facade.hasProxyByName(aliasName)) {
-				return this.facade.getProxyByName(aliasName);
-			}
+        }
+        protected autoMVC(classType: new () => any): any {
+            let fullClassName = egret.getQualifiedClassName(classType);
+            if (Singleton.IsUnique(fullClassName)) {
+                return Singleton.GetInstance(fullClassName);
+            }
 
-			let ins = this.facade.getInjectLock(aliasName);
-			if (!ins) {
-				ins = Singleton.__GetOrCreateOneInstance(aliasName);
-				if (egret.is(ins, MVCInject.INJECTABLE_FULLNAME)) {
-					ins = this.inject(ins);
-				}
-				if (isMediator) {
-					ins["_name"] = aliasName;
-					this.facade.registerMediator(<IMediator>ins);
-				}
-				else if (isProxy) {
-					ins["_name"] = aliasName;
-					this.facade.registerProxy(<IProxy>ins);
-				}
-			}
+            let aliasName = fullClassName.split(".").pop();
+            let isProxy = ReflectUtils.IsSubclassOf(classType, Proxy);
+            let isMediator = ReflectUtils.IsSubclassOf(classType, Mediator);
+            if (isProxy || isMediator) {
+                Singleton.RegisterClass(classType, aliasName);
+            } else {
+                let ins = new classType();
+                if (ins[MVCInject.INJECTABLE_FULLNAME]) {
+                    ins = this.inject(ins);
+                }
+                return ins;
+            }
 
-			return ins;
-		}
-	}
+            if (isMediator && this.facade.hasMediatorByName(aliasName)) {
+                return this.facade.getMediatorByName(aliasName);
+            } else if (isProxy && this.facade.hasProxyByName(aliasName)) {
+                return this.facade.getProxyByName(aliasName);
+            }
+
+            let ins = this.facade.getInjectLock(aliasName);
+            if (!ins) {
+                ins = Singleton.__GetOrCreateOneInstance(aliasName);
+                if (ins[MVCInject.INJECTABLE_FULLNAME]) {
+                    ins = this.inject(ins);
+                }
+                if (isMediator) {
+                    ins["_name"] = aliasName;
+                    this.facade.registerMediator(<IMediator>ins);
+                }
+                else if (isProxy) {
+                    ins["_name"] = aliasName;
+                    this.facade.registerProxy(<IProxy>ins);
+                }
+            }
+
+            return ins;
+        }
+    }
 }

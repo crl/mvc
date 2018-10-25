@@ -21,14 +21,32 @@ class Main extends egret.DisplayObjectContainer {
             egret.ticker.resume();
         }
 
+
+        let loader:egret.URLLoader=new egret.URLLoader();
+        loader.dataFormat=egret.URLLoaderDataFormat.TEXT;
+        loader.addEventListener(egret.Event.COMPLETE,this.defHandle,this);
+        let url="./manifestDef.json";
+        let request=new egret.URLRequest(url);
+        loader.load(request);
+    }
+
+    private defHandle(event:egret.Event){
+        let loader:egret.URLLoader=event.target;
+        let o=JSON.parse(loader.data);
+        mvc.MVCInject.InitMVCInjectDef(o);
+        
         this.runGame().catch(e => {
             console.log(e);
         })
-
     }
 
     private async runGame() {
         UILocator.Init(this);
+
+        mvc.Singleton.RegisterMulitClass(gameSDK.BagMediator,gameSDK.BagProxy);
+        mvc.Singleton.RegisterMulitClass(SkillMediator,gameSDK.SkillProxy);
+        mvc.Singleton.RegisterClass(BagView);
+        mvc.Singleton.RegisterClass(SkillView);
         //Facade.RegisterModule(BagMediator,BagView,gameSDK.BagProxy);
 
         let bagMediator:gameSDK.BagMediator=Facade.GetMediator(gameSDK.BagMediator);
