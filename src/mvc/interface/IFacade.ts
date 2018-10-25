@@ -52,6 +52,11 @@ namespace mvc {
 		 */
 		registerEventInterester(eventInterester:IEventInterester,injectEventType:InjectEventType, isBind?:boolean);
 
+		/**
+		 * 用于限制互相依赖的锁
+		 * @param className 
+		 */
 		getInjectLock(className:string):any;
+		__unSafeInjectInstance(toLockInstance: IMVCHost, className?: string)
 	}
 }

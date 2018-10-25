@@ -1,22 +1,4 @@
 module mvc {
-    //不导出
-    class ClassInjectData {
-
-        public propertys: { [index: string]: any } = {};
-        //typeEvents
-        public typeEventHandles: { [index: string]: Array<InjectEventTypeHandle> } = {};
-        //指令
-        public cmds: { [index: number]: Array<(e: IStream) => void> } = {};
-        public constructor(public classPrototype: Function) {
-        }
-        /**
-         * 取得完整类名
-         */
-        getFullClassName(): any {
-            return this.classPrototype["constructor"]["name"];
-        }
-    }
-
 	/**
 	 * 注入管理类
 	 */
@@ -50,58 +32,12 @@ module mvc {
             }
         }
 
-        private static injectMapping: Array<ClassInjectData> = new Array<ClassInjectData>();
-
-        public static AddMVC(classPrototype: Function, property: string) {
-
-            let classInjectData: ClassInjectData = null;
-
-            for (let item of MVCInject.injectMapping) {
-                if (item.classPrototype == classPrototype) {
-                    classInjectData = item;
-                    break;
-                }
-            }
-
-            if (!classInjectData) {
-                classInjectData = new ClassInjectData(classPrototype);
-                MVCInject.injectMapping.push(classInjectData);
-            }
-
-            classInjectData.propertys[property] = 1;
-        }
-
-        public static AddCMD(classPrototype: Function, cmd: number, handle: (e: IStream) => void) {
-
-            let classInjectData = null;
-            for (let item of MVCInject.injectMapping) {
-                if (item.classPrototype == classPrototype) {
-                    classInjectData = item;
-                    break;
-                }
-            }
-
-            if (!classInjectData) {
-                classInjectData = new ClassInjectData(classPrototype);
-                MVCInject.injectMapping.push(classInjectData);
-            }
-
-            let list = classInjectData.cmds[cmd];
-            if (!list) {
-                list = new Array<(e: IStream) => void>();
-                classInjectData.cmds[cmd] = list;
-            }
-            if (list.indexOf(handle) == -1) {
-                list.push(handle);
-            }
-        }
-
         private facade: IFacade;
         public constructor(facade: IFacade) {
             this.facade = facade;
         }
 
-        private getInjectClassByDef(classInjectData: ClassInjectData, property: string): new () => any {
+        private getInjectClassByDef(classInjectData: InjectClassData, property: string): new () => any {
             let fullClassName = classInjectData.getFullClassName();
             let dic = MVCInject.injectDefMapping[fullClassName];
             if (!dic) {
@@ -132,19 +68,16 @@ module mvc {
         public inject(target: IInjectable): IInjectable {
             let type = Object.getPrototypeOf(target);
             while (type) {
-                for (let item of MVCInject.injectMapping) {
-                    if (item.classPrototype == type) {
-                        this.doInject(item, target);
-                        break;
-                    }
-                }
+                let item=InjectAttribute.Get(type);
+                if(item)this.doInject(item, target);
+                
                 //循环找基类注入
                 type = Object.getPrototypeOf(type);
             }
             return target;
         }
 
-        protected doInject(classInjectData: ClassInjectData, target: IInjectable) {
+        protected doInject(classInjectData: InjectClassData, target: IInjectable) {
             for (let key in classInjectData.propertys) {
                 let cls = this.getInjectClassByDef(classInjectData, key);
                 if (cls == null) {
@@ -199,15 +132,17 @@ module mvc {
             let ins = this.facade.getInjectLock(aliasName);
             if (!ins) {
                 ins = Singleton.__GetOrCreateOneInstance(aliasName);
+                ins["_name"] = aliasName;
+               
+                //可注入 必须加锁 (先调用也是想让onRegister的时候 可以访问注入对像)
                 if (ins[MVCInject.INJECTABLE_FULLNAME]) {
-                    ins = this.inject(ins);
+                    this.facade.__unSafeInjectInstance(ins);
                 }
+
                 if (isMediator) {
-                    ins["_name"] = aliasName;
                     this.facade.registerMediator(<IMediator>ins);
                 }
                 else if (isProxy) {
-                    ins["_name"] = aliasName;
                     this.facade.registerProxy(<IProxy>ins);
                 }
             }

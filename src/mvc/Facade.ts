@@ -72,7 +72,7 @@ namespace mvc {
 		}
 
 
-		public __unSafeInjectInstance(host: IMVCHost, hostName: string = "") {
+		public __unSafeInjectInstance(host: IMVCHost, hostName?: string) {
 			if (!hostName) {
 				hostName = host.name;
 			}
