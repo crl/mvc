@@ -112,21 +112,21 @@ module mvc {
             }
             let aliasName = Singleton.GetAliasName(fullClassName);
             let isProxy = ReflectUtils.IsSubclassOf(classType, Proxy);
-            let isMediator = ReflectUtils.IsSubclassOf(classType, Mediator);
-            if (isProxy || isMediator) {
-                Singleton.RegisterClass(classType, aliasName);
-            } else {
+            let isMediator:boolean;
+            if(isProxy){
+                if(this.facade.hasProxyByName(aliasName)) {
+                    return this.facade.getProxyByName(aliasName);
+                }
+            }else if(isMediator=ReflectUtils.IsSubclassOf(classType, Mediator)){
+                if(this.facade.hasMediatorByName(aliasName)) {
+                    return this.facade.getMediatorByName(aliasName);
+                }
+            }else{
                 let ins = new classType();
                 if (ins[MVCInject.INJECTABLE_FULLNAME]) {
                     ins = this.inject(ins);
                 }
                 return ins;
-            }
-
-            if (isMediator && this.facade.hasMediatorByName(aliasName)) {
-                return this.facade.getMediatorByName(aliasName);
-            } else if (isProxy && this.facade.hasProxyByName(aliasName)) {
-                return this.facade.getProxyByName(aliasName);
             }
 
             let ins = this.facade.getInjectLock(aliasName);
