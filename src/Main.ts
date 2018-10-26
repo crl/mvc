@@ -22,48 +22,11 @@ class Main extends egret.DisplayObjectContainer {
             egret.ticker.resume();
         }
 
-
-        let loader:egret.URLLoader=new egret.URLLoader();
-        loader.dataFormat=egret.URLLoaderDataFormat.TEXT;
-        loader.addEventListener(egret.Event.COMPLETE,this.defHandle,this);
-        let url="./manifestDef.json";
-        let request=new egret.URLRequest(url);
-        loader.load(request);
-    }
-
-    private defHandle(event:egret.Event){
-        let loader:egret.URLLoader=event.target;
-        let o=JSON.parse(loader.data);
-        mvc.MVCInject.InitMVCInjectDef(o);
-        
-        this.runGame().catch(e => {
-            DebugX.LogError(e);
-        })
-    }
-
-    private async runGame() {
         UILocator.Init(this);
+        let stateMachine=new foundation.StateMachine();
+        stateMachine.addState(new ScenePreload());
+        stateMachine.addState(new SceneGame());
 
-        mvc.Singleton.RegisterMulitClass(gameSDK.BagMediator,gameSDK.BagProxy);
-        mvc.Singleton.RegisterMulitClass(SkillMediator,gameSDK.SkillProxy);
-        mvc.Singleton.RegisterClass(BagView);
-        mvc.Singleton.RegisterClass(SkillView);
-        //Facade.RegisterModule(BagMediator,BagView,gameSDK.BagProxy);
-
-        let mediator=Facade.ToggleMediator(SkillMediator);
-        mediator.fuck();
-        
-        let bagMediator=Facade.GetMediator(gameSDK.BagMediator);
-        //bagMediator.toggleSelf(1);
-        bagMediator.fuck();
-
-        let t=<IStream>{code:1000};
-        SocketX.Dispatch(t);
-
-
-        t={code:1920} as IStream;
-        SocketX.Dispatch(t);
-
-        Facade.SimpleDispatch(EventX.READY,"hello");
+        stateMachine.currentState=ScenePreload.TYPE;
     }
 }

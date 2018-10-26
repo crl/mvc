@@ -1,8 +1,6 @@
-namespace foundation
-{
-    export class StateMachineEventX
-    {
-        public static readonly CHANGE:string = "StateMachineEventX_CHANGE";
+namespace foundation {
+    export class StateMachineEventX {
+        public static readonly CHANGE: string = "StateMachineEventX_CHANGE";
     }
 
     /// <summary>
@@ -10,19 +8,17 @@ namespace foundation
     ///  抽像不同事物的状态,让它在一定时间内只处于一个状态
     ///  如：场景
     /// </summary>
-    export class StateMachine extends foundation.EventDispatcher
-    {
-        protected  states:Dictionary<string, IState>;
-        protected _currentState:IState;
-        public updateLimit:number = 0;
-        private preTime:number = 0;
+    export class StateMachine extends foundation.EventDispatcher {
+        protected states: Dictionary<string, IState>;
+        protected _currentState: IState;
+        public updateLimit: number = 0;
+        private preTime: number = 0;
 
         /// <summary>
         /// 状态机;
         /// </summary>
         /// <param name="target">状态机控制的对像;</param>
-        constructor()
-        {
+        constructor() {
             super();
             this.states = new Dictionary<string, IState>();
         }
@@ -32,10 +28,8 @@ namespace foundation
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public addState(value:IState):boolean
-        {
-            if (this.states.ContainsKey(value.type))
-            {
+        public addState(value: IState): boolean {
+            if (this.states.ContainsKey(value.type)) {
                 return false;
             }
             value.stateMachine = this;
@@ -49,10 +43,8 @@ namespace foundation
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public  removeState(value:IState):boolean
-        {
-            if (this.hasState(value.type) == false)
-            {
+        public removeState(value: IState): boolean {
+            if (this.hasState(value.type) == false) {
                 return false;
             }
             value.stateMachine = null;
@@ -65,8 +57,7 @@ namespace foundation
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public hasState(type:string):boolean
-        {
+        public hasState(type: string): boolean {
             return this.states.ContainsKey(type);
         }
 
@@ -75,16 +66,13 @@ namespace foundation
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>		
-        public getState(type:string):IState
-        {
-            if (!type)
-            {
+        public getState(type: string): IState {
+            if (!type) {
                 return null;
             }
 
-            let state=this.states.Get(type);
-            if (state)
-            {
+            let state = this.states.Get(type);
+            if (state) {
                 return state;
             }
             return null;
@@ -93,87 +81,72 @@ namespace foundation
         /// <summary>
         /// 设置当前状态 
         /// </summary>
-        public get currentState():string
-        {
-                if (this._currentState == null)
-                {
-                    return "";
-                }
-                return this._currentState.type;
+        public get currentState(): string {
+            if (this._currentState == null) {
+                return "";
             }
-            public set currentState(value:string)
-            {
-                let newState = this.getState(value);
-              
-                if (newState == this._currentState)
-                {
-                    DebugX.Log("currentState not change:"+this._currentState);
-                    return;
-                }
+            return this._currentState.type;
+        }
+        public set currentState(value: string) {
+            let newState = this.getState(value);
 
-                if (this._currentState != null)
-                {
-                    this._currentState.removeEventListener(EventX.EXIT, this.exitHandle,this);
-                    this._currentState.sleep();
-                    this._currentState = null;
-                }
-
-                this._currentState = newState;
-
-                if (this._currentState != null)
-                {
-                  
-                    let type = this._currentState.type;
-                    if (this._currentState.initialized == false)
-                    {
-                        this._currentState.initialize();
-                    }
-
-                    this._currentState.addEventListener(EventX.EXIT, this.exitHandle,this);
-                    this._currentState.awaken();
-                }
-                else if(!value)
-                {
-                    DebugX.Log("未注册SceneState:"+value);
-                }
-
-                this.simpleDispatch(StateMachineEventX.CHANGE);
+            if (newState == this._currentState) {
+                DebugX.Log("currentState not change:" + this._currentState);
+                return;
             }
-        
+
+            if (this._currentState != null) {
+                this._currentState.removeEventListener(EventX.EXIT, this.exitHandle, this);
+                this._currentState.sleep();
+                this._currentState = null;
+            }
+
+            this._currentState = newState;
+
+            if (this._currentState != null) {
+
+                let type = this._currentState.type;
+                if (this._currentState.initialized == false) {
+                    this._currentState.initialize();
+                }
+
+                this._currentState.addEventListener(EventX.EXIT, this.exitHandle, this);
+                this._currentState.awaken();
+            }
+            else if (!value) {
+                DebugX.Log("未注册SceneState:" + value);
+            }
+
+            this.simpleDispatch(StateMachineEventX.CHANGE);
+        }
 
 
-        protected Update()
-        {
-            let now=TickManager.GetNow();
-            if (now - this.preTime < this.updateLimit)
-            {
+
+        protected Update() {
+            let now = TickManager.GetNow();
+            if (now - this.preTime < this.updateLimit) {
                 return;
             }
             this.preTime = now;
 
-            if (this._currentState != null)
-            {
+            if (this._currentState != null) {
                 this._currentState.update();
             }
         }
 
-        private exitHandle(e:EventX)
-        {
+        private exitHandle(e: EventX) {
             let target = e.target as IState;
-            target.removeEventListener(EventX.EXIT, this.exitHandle,this);
+            target.removeEventListener(EventX.EXIT, this.exitHandle, this);
 
-            if (target != this._currentState)
-            {
+            if (target != this._currentState) {
                 return;
             }
 
             this._currentState = null;
-            if (target.nextState)
-            {
+            if (target.nextState) {
                 this.currentState = target.nextState;
             }
-            else
-            {
+            else {
                 this.currentState = null;
             }
         }

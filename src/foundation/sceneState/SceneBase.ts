@@ -4,8 +4,9 @@ namespace foundation
     {
         protected _resizeable:boolean = false;
         protected facade:mvc.IFacade;
-        public SceneBase(type:string) 
+        public constructor(type:string) 
         {
+            super();
             this._type = type;
         }
 

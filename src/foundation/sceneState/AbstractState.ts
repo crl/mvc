@@ -49,9 +49,6 @@ namespace foundation {
         get nextState(): string {
             return this._nextState;
         }
-        set nextState(value: string) {
-            this._nextState = value;
-        }
 
         sleep() {
             if (AbstractState.IsDebug) {
