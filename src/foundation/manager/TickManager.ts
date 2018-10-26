@@ -1,5 +1,8 @@
 namespace foundation {
     export class TickManager {
+        static GetNow(): number {
+            return 0;
+        }
         private static updateQueue: QueueHandle<number>;
         static Add(action: ActionT<number>, thisObj?: any): boolean {
             return TickManager.updateQueue.$addHandle(action, thisObj, 0);

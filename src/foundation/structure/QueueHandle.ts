@@ -30,8 +30,8 @@ namespace foundation {
             }
         }
 
-        firstNode: SignalNode<T>;
-        lastNode: SignalNode<T>;
+        $firstNode: SignalNode<T>;
+        $lastNode: SignalNode<T>;
         protected maping: TwoKeyDictionary<ActionT<T>, any, SignalNode<T>>;
         protected len: number = 0;
         $dispatching: boolean = false;
@@ -42,7 +42,7 @@ namespace foundation {
         public dispatch(e: T) {
             if (this.len > 0) {
                 this.$dispatching = true;
-                let t = this.firstNode;
+                let t = this.$firstNode;
                 let temp:List<SignalNode<T>> = QueueHandle.GetSignalNodeList<T>();
                 while (t != null) {
                     if (t.$active == NodeActiveState.Runing) {
@@ -98,13 +98,13 @@ namespace foundation {
                 t.$active = NodeActiveState.ToDoAdd;
             }
 
-            if (this.lastNode != null) {
-                this.lastNode.next = t;
-                t.pre = this.lastNode;
-                this.lastNode = t;
+            if (this.$lastNode != null) {
+                this.$lastNode.next = t;
+                t.pre = this.$lastNode;
+                this.$lastNode = t;
             }
             else {
-                this.firstNode = this.lastNode = t;
+                this.$firstNode = this.$lastNode = t;
             }
 
             this.len++;
@@ -114,7 +114,7 @@ namespace foundation {
 
 
         public $removeHandle(value: ActionT<T>, thisObj: any): boolean {
-            if (this.lastNode == null || this.maping == null) {
+            if (this.$lastNode == null || this.maping == null) {
                 return false;
             }
 
@@ -147,13 +147,13 @@ namespace foundation {
             if (pre != null) {
                 pre.next = next;
             } else {
-                this.firstNode = next;
+                this.$firstNode = next;
             }
 
             if (next != null) {
                 next.pre = pre;
             } else {
-                this.lastNode = pre;
+                this.$lastNode = pre;
             }
             t.$active = NodeActiveState.ToDoDelete;
 
@@ -175,10 +175,10 @@ namespace foundation {
 
 
         $clear() {
-            if (null == this.firstNode) {
+            if (null == this.$firstNode) {
                 return;
             }
-            let t = this.firstNode;
+            let t = this.$firstNode;
             let n: SignalNode<T>;
             while (t != null) {
                 t.action = null;
@@ -194,7 +194,7 @@ namespace foundation {
                 t = n;
             }
             this.maping = null;
-            this.firstNode = this.lastNode = null;
+            this.$firstNode = this.$lastNode = null;
             this.len = 0;
         }
 

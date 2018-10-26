@@ -14,7 +14,7 @@ namespace foundation {
         /// <param name="key">替换掉key相同 已有的handler</param>
         public static Add(handler: Action, thisObj?: any, deleTime: number = 16, key: string = "") {
             if (deleTime <= 0) {
-                handler();
+                handler.call(thisObj,null);
                 return;
             }
             if (deleTime < 16) {
@@ -66,12 +66,8 @@ namespace foundation {
                 }
             }
         }
-
-        private getNow(): number {
-            return 0;
-        }
         private add(delayTime: number, handler: Action, thisObj?: any) {
-            this.$addHandle(handler, thisObj, this.getNow() + delayTime, true);
+            this.$addHandle(handler, thisObj, TickManager.GetNow() + delayTime, true);
             if (this.len > 0) {
                 TickManager.Add(this.render);
             } else if (this.$firstNode != null) {
@@ -79,15 +75,12 @@ namespace foundation {
                 DebugX.LogError("callLater 有bug:" + this.len);
             }
         }
-
-        //private List<Action> tempHandle = new List<Action>();
         private render(deltaTime: number) {
             if (this.len > 0) {
                 this.$dispatching = true;
                 let t = this.$firstNode;
-
                 let temp = QueueAction.GetSignalNodeList<number>();
-                let now = this.getNow();
+                let now = TickManager.GetNow();
                 while (t != null) {
                     if (t.$active == NodeActiveState.Runing) {
                         if (now > t.data) {
