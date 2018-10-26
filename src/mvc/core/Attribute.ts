@@ -41,12 +41,12 @@ function MVCE(type: InjectEventType, ...events: Array<string>) {
 
 namespace mvc{
 	export class InjectEventTypeHandle {
-		public constructor(public injectType: InjectEventType, public events: Array<string>, public handle: (EventX) => void) { }
+		public constructor(public injectType: InjectEventType, public events: Array<string>, public handle: Action<EventX>) { }
 	}
 	export class InjectClassData {
 		public propertys: { [index: string]: any } = {};
 		//指令
-		public cmds: { [index: number]: Array<(e: IStream) => void> } = {};
+		public cmds: { [index: number]: Array<Action<IStream>> } = {};
 		public constructor(public classPrototype: Function) {
 		}
 		/**
@@ -81,7 +81,7 @@ namespace mvc{
             }
             classInjectData.propertys[property] = 1;
         }
-        public static AddCMD(classPrototype: Function, cmd: number, handle: (e: IStream) => void) {
+        public static AddCMD(classPrototype: Function, cmd: number, handle: Action<IStream>) {
             let classInjectData = null;
             for (let item of InjectAttribute.injectMapping) {
                 if (item.classPrototype == classPrototype) {
@@ -96,7 +96,7 @@ namespace mvc{
 
             let list = classInjectData.cmds[cmd];
             if (!list) {
-                list = new Array<(e: IStream) => void>();
+                list = new Array<Action<IStream>>();
                 classInjectData.cmds[cmd] = list;
             }
             if (list.indexOf(handle) == -1) {

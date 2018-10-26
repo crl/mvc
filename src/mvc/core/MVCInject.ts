@@ -37,7 +37,7 @@ module mvc {
             this.facade = facade;
         }
 
-        private getInjectClassByDef(classInjectData: InjectClassData, property: string): new () => any {
+        private getInjectClassByDef(classInjectData: InjectClassData, property: string): Class {
             let fullClassName = classInjectData.getFullClassName();
             let dic = MVCInject.injectDefMapping[fullClassName];
             if (!dic) {
@@ -105,7 +105,7 @@ module mvc {
             }
 
         }
-        protected autoMVC(classType: new () => any): any {
+        protected autoMVC(classType:Class): any {
             let fullClassName = Singleton.GetClassFullName(classType);
             if (Singleton.IsUnique(fullClassName)) {
                 return Singleton.GetInstance(fullClassName);

@@ -4,12 +4,12 @@ namespace mvc {
 		 * @property index:InjectEventType;
 		 */
 		__eventInteresting: { [index: string]: Array<InjectEventTypeHandle> };
-		getEventInterests(type: InjectEventType): Array<InjectEventTypeHandle>;
+		getEventInterests(InjectEventType): Array<InjectEventTypeHandle>;
 	}
 	export interface IView {
-		get(name: string): IMVCHost;
-		register(host: IMVCHost): boolean;
-		remove(host: IMVCHost): boolean;
+		get(string): IMVCHost;
+		register(IMVCHost): boolean;
+		remove(IMVCHost): boolean;
 	}
 	export interface IMVCHost extends IAsync, IEventInterester, IInjectable {
 		readonly name: string;
@@ -19,13 +19,13 @@ namespace mvc {
 	export interface IAsync {
 		readonly isReady: boolean;
 		startSync(): boolean;
-		addReayHandle(handle: (e: EventX) => void): boolean;
+		addReayHandle(handle: Action<EventX>): boolean;
 	}
 	export interface INotifier {
 		simpleDispatch(type: string, data: any): boolean
 	}
 	export interface ICommand {
-		execute(e: EventX): void;
+		execute(EventX): void;
 	}
 	export interface IInject {
 		inject(target: IInjectable): IInjectable;

@@ -24,7 +24,7 @@ namespace mvc {
 		public hasMediatorByName(mediatorName: string): boolean {
 			return this.view.get(mediatorName) != null;
 		}
-		public hasMediator<T extends IMediator>(c: new () => T): boolean {
+		public hasMediator<T extends IMediator>(c: ClassT<T>): boolean {
 			let aliasName = Singleton.GetAliasName(c);
 			return this.hasMediatorByName(aliasName);
 		}
@@ -51,7 +51,7 @@ namespace mvc {
 			this.model.register(proxy);
 		}
 
-		public registerCommand<T>(eventType: string, c: new () => T): boolean {
+		public registerCommand<T>(eventType: string, c: ClassT<T>): boolean {
 			if (this.commandsMap[eventType]) {
 
 				return false;
@@ -59,7 +59,7 @@ namespace mvc {
 			this.commandsMap[eventType] = c;
 			return true;
 		}
-		public removeCommand<T>(eventType: string, c: new () => T): boolean {
+		public removeCommand<T>(eventType: string, c: ClassT<T>): boolean {
 			if (this.commandsMap[eventType]) {
 
 				delete this.commandsMap[eventType]
@@ -87,7 +87,7 @@ namespace mvc {
 			return this.mvcInjectLock[className];
 		}
 
-		protected routerCreateInstance(type: new () => any): any {
+		protected routerCreateInstance(type: Class): any {
 			return new type();
 		}
 
@@ -99,7 +99,7 @@ namespace mvc {
 		}
 
 
-		public getMediator<T extends IMediator>(c: new () => T): T {
+		public getMediator<T extends IMediator>(c: ClassT<T>): T {
 			let aliasName =  Singleton.GetAliasName(c);
 			let ins = <T>this.getMediatorByName(aliasName);
 			if (!ins) {
@@ -110,14 +110,14 @@ namespace mvc {
 			return ins;
 		}
 
-		public static GetMediator<T extends IMediator>(c: new () => T): T {
+		public static GetMediator<T extends IMediator>(c: ClassT<T>): T {
 			return Facade.GetInstance().getMediator(c);
 		}
-		public static GetProxy<T extends IProxy>(c: new () => T): T {
+		public static GetProxy<T extends IProxy>(c: ClassT<T>): T {
 			return Facade.GetInstance().getProxy(c);
 		}
 
-		public static ToggleMediator<T extends IMediator>(c: new () => T): T {
+		public static ToggleMediator<T extends IMediator>(c: ClassT<T>): T {
 			return Facade.GetInstance().toggleMediator(c);
 		}
 
@@ -125,7 +125,7 @@ namespace mvc {
 		public hasProxyByName(proxyName: string): boolean {
 			return this.model.get(proxyName) != null;
 		}
-		public hasProxy<T extends IProxy>(c: new () => T): boolean {
+		public hasProxy<T extends IProxy>(c: ClassT<T>): boolean {
 			let aliasName = Singleton.GetAliasName(c);
 			return this.hasProxyByName(aliasName);
 		}
@@ -142,7 +142,7 @@ namespace mvc {
 			}
 			return proxy;
 		}
-		public getProxy<T extends IProxy>(c: new () => T): T {
+		public getProxy<T extends IProxy>(c: ClassT<T>): T {
 			let aliasName = Singleton.GetAliasName(c);
 			let ins = <T>this.getProxyByName(aliasName);
 			if (!ins) {
@@ -212,7 +212,7 @@ namespace mvc {
 			return mediator;
 		}
 
-		public toggleMediator<T extends IMediator>(c: new () => T, type: number = -1): T {
+		public toggleMediator<T extends IMediator>(c: ClassT<T>, type: number = -1): T {
 			let aliasName = Singleton.GetAliasName(c);
 			let t = <T>this.toggleMediatorByName(aliasName, type);
 			if (t == null) {

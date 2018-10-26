@@ -3,13 +3,13 @@ namespace mvc {
         /**
          * 单例辅助
          */
-        private static uniqueClassMap: { [index: string]: new () => any } = {};
+        private static uniqueClassMap: { [index: string]: Class } = {};
         private static uniqueInstanceMap: { [index: string]: any } = {};
 
         /**
          * 类名或都别名找到类
          */
-        private static __classMap: { [index: string]: new () => any } = {};
+        private static __classMap: { [index: string]: Class } = {};
 
         /**
          * 别名关系表
@@ -21,7 +21,7 @@ namespace mvc {
          * 取得一个别名，或者短名称 (eg: com.lingyu.BagView 得到已注册的别名 或者生成一个规则下的短名:BagView )
          * @param fullClassName 完整的类名
          */
-        static GetAliasName(fullClassName: string | { new(): any }): string {
+        static GetAliasName(fullClassName: string | Class): string {
             if (fullClassName) {
                 let str: string;
                 if (typeof fullClassName == "string") {
@@ -58,7 +58,7 @@ namespace mvc {
         * @param aliasName 取一个别名
         * @param fullClassName 实际的完整类名(因为js默认编译是不包含包的名称空间或者模块,完整名称有利于区别不同的模块下面的同名类)
         */
-        public static RegisterUnique<T>(c: new () => T, aliasName?: string, fullClassName?: string) {
+        public static RegisterUnique<T>(c: ClassT<T>, aliasName?: string, fullClassName?: string) {
             if (!fullClassName) {
                 fullClassName = Singleton.GetClassFullName(c);
             }
@@ -81,7 +81,7 @@ namespace mvc {
          * 注册类的别名(批量)
          * @param arg 
          */
-        public static RegisterMulitClass(...arg: Array<new () => any>) {
+        public static RegisterMulitClass(...arg: Array<Class>) {
             for (const iterator of arg) {
                 if (iterator) Singleton.RegisterClass(iterator);
             }
@@ -93,7 +93,7 @@ namespace mvc {
          * @param aliasName 取一个别名
          * @param fullClassName 实际的完整类名(因为js默认编译是不包含包的名称空间或者模块,完整名称有利于区别不同的模块下面的同名类)
          */
-        public static RegisterClass<T>(c: new () => T, aliasName?: string, fullClassName?: string) {
+        public static RegisterClass<T>(c: Class, aliasName?: string, fullClassName?: string) {
             if (!fullClassName) {
                 fullClassName = Singleton.GetClassFullName(c);
             }
@@ -185,7 +185,7 @@ namespace mvc {
          * 用别名 取得一个类型
          * @param aliasName 别名/完整类名
          */
-        public static GetClass(aliasName: string): new () => any {
+        public static GetClass(aliasName: string): Class {
             if (!aliasName) {
                 console.error("aliasName is empty:" + aliasName);
                 return null;

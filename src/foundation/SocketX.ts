@@ -48,7 +48,7 @@ class SocketX {
 		SocketX.sender.removeEventListener(type,listener,thisObj,false);
 	}
 
-	public static AddListener(code: number, handler: (e: IStream) => void, thisObj: any): boolean {
+	public static AddListener(code: number, handler: Action<IStream>, thisObj: any): boolean {
 		let list = SocketX.cmds[code];
 		if (!list) {
 			list = new Array<ListenerItemBox<IStream>>();

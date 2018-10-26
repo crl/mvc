@@ -38,7 +38,7 @@ module mvc {
 		}
 
 
-		addReayHandle(handle: (e: EventX) => void, thisObj?: any): boolean {
+		addReayHandle(handle: Action<EventX>, thisObj?: any): boolean {
 			if (this._isReady) {
 				handle(EventX.ReadyEventX);
 				return true;
@@ -56,7 +56,7 @@ module mvc {
 			this.readyHandle.push(new ListenerItemBox(handle, thisObj));
 			return true;
 		}
-		removeReayHandle(handle: (e: EventX) => void, thisObj?: any): boolean {
+		removeReayHandle(handle: Action<EventX>, thisObj?: any): boolean {
 			if (this._isReady) {
 				return false;
 			}
