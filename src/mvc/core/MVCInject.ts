@@ -72,7 +72,7 @@ module mvc {
             for (let key in classInjectData.propertys) {
                 let cls = this.getInjectClassByDef(classInjectData, key);
                 if (cls == null) {
-                    console.error(target, key, "注入的类型找不到:" + classInjectData.getFullClassName());
+                    DebugX.LogError(target, key, "注入的类型找不到:" + classInjectData.getFullClassName());
                     continue;
                 }
                 let o = this.autoMVC(cls);

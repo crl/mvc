@@ -129,7 +129,7 @@ namespace mvc {
          */
         public static __GetOrCreateOneInstance(aliasName: string): any {
             if (!aliasName) {
-                console.warn("aliasName is empty:", aliasName);
+                DebugX.Warn("aliasName is empty:", aliasName);
                 return null;
             }
             let target = Singleton.uniqueInstanceMap[aliasName];
@@ -147,7 +147,7 @@ namespace mvc {
                 let realName = c["name"];
                 let t;
                 if (t = Singleton.uniqueInstanceMap[realName]) {
-                    console.warn(realName + " uniqueInstanceMap has:" + t)
+                    DebugX.Warn(realName + " uniqueInstanceMap has:" + t)
                 } else {
                     Singleton.uniqueInstanceMap[realName] = ins;
                 }
@@ -187,7 +187,7 @@ namespace mvc {
          */
         public static GetClass(aliasName: string): Class {
             if (!aliasName) {
-                console.error("aliasName is empty:" + aliasName);
+                DebugX.LogError("aliasName is empty:" + aliasName);
                 return null;
             }
 

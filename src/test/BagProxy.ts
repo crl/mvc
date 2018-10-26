@@ -2,8 +2,12 @@ module gameSDK {
 	export class BagProxy extends mvc.Proxy{
 		@MVC
 		public skillProxy:SkillProxy;
-		public fuck(){
-			console.log("call:",this.name,'fuck');
+		public fuck(isAlert:boolean=false){
+			if(isAlert){
+				DebugX.LogError("call:",this.name,'fuck');
+			}else{
+				DebugX.Log("call:",this.name,'fuck');
+			}
 		}
 	}
 }

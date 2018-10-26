@@ -36,7 +36,7 @@ class Main extends egret.DisplayObjectContainer {
         mvc.MVCInject.InitMVCInjectDef(o);
         
         this.runGame().catch(e => {
-            console.log(e);
+            DebugX.LogError(e);
         })
     }
 

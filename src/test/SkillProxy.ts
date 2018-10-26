@@ -3,8 +3,12 @@ module gameSDK {
 
 		@MVC
 		hello:BagProxy;
-		public fuck(){
-			console.log("call:",this.name,'fuck');
+		public fuck(isAlert:boolean=false){
+			if(isAlert){
+				DebugX.LogError("call:",this.name,'fuck');
+			}else{
+				DebugX.Log("call:",this.name,'fuck');
+			}
 		}
 	}
 }

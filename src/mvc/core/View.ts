@@ -8,7 +8,7 @@ module mvc {
 		public register(host:IMVCHost):boolean{
 			let name = host.name;
 			if (this.hostMap[name]) {
-				console.warn("duplicate:"+name);
+				DebugX.Warn("duplicate:"+name);
 				return false;
 			}
 			this.hostMap[ name ] = host;
@@ -19,7 +19,7 @@ module mvc {
 		public remove(host:IMVCHost){
 			let name = host.name;
 			if (!this.hostMap[name]) {
-				console.warn("not eixst:"+name);
+				DebugX.Warn("not eixst:"+name);
 				return false;
 			}
 			this.hostMap[ name ] = null;

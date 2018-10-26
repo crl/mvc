@@ -13,6 +13,6 @@ class SkillView extends BagView{
 
 		Facade.ToggleMediator(gameSDK.BagMediator);
 
-		this.skillModel.fuck();
+		this.skillModel.fuck(true);
 	}
 }
