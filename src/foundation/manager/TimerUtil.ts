@@ -167,7 +167,7 @@ namespace foundation {
             this.pre = now;
 
             this.$dispatching = true;
-            let t = this.firstNode;
+            let t = this.$firstNode;
 
             let temp = QueueHandle.GetSignalNodeList<number>();
 

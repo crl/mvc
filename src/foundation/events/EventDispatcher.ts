@@ -76,7 +76,7 @@ namespace foundation
                 return false;
             }
 
-            let t = signal.firstNode;
+            let t = signal.$firstNode;
             if (t == null) {
                 return false;
             }
@@ -117,7 +117,7 @@ namespace foundation
             let signal=this.mEventListeners.Get(type);
             if (signal)
             {
-                return signal != null && signal.firstNode != null;
+                return signal != null && signal.$firstNode != null;
             }
             return false;
         }

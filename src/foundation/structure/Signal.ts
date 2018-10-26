@@ -33,15 +33,15 @@ namespace foundation {
                 newNode.$active = NodeActiveState.ToDoAdd;
             }
 
-            if (this.firstNode == null) {
+            if (this.$firstNode == null) {
                 this.len = 1;
-                this.lastNode = this.firstNode = newNode;
+                this.$lastNode = this.$firstNode = newNode;
                 return true;
             }
 
             let findNode: SignalNode<EventX> = null;
-            if (priority > this.lastNode.priority) {
-                t = this.firstNode;
+            if (priority > this.$lastNode.priority) {
+                t = this.$firstNode;
                 let pre: SignalNode<EventX>;
                 //var next:SignalNode;
                 while (null != t) {
@@ -56,7 +56,7 @@ namespace foundation {
                             newNode.pre = pre;
                         }
                         else {
-                            this.firstNode = newNode;
+                            this.$firstNode = newNode;
                         }
 
                         findNode = t;
@@ -68,9 +68,9 @@ namespace foundation {
             }
 
             if (null == findNode) {
-                this.lastNode.next = newNode;
-                newNode.pre = this.lastNode;
-                this.lastNode = newNode;
+                this.$lastNode.next = newNode;
+                newNode.pre = this.$lastNode;
+                this.$lastNode = newNode;
             }
             this.len++;
             return true;
