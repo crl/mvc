@@ -7,7 +7,12 @@ class SkillMediator extends mvc.Mediator {
 
 	@MVC
 	private bagProxy: gameSDK.BagProxy;
-
+	onMediatorReadyHandle(){
+		this.view.addEventListener(EventX.CLICK,this.clickHandle,this);
+	}
+	clickHandle(e:EventX) {
+		this.toggleSelf();
+	}
 	onAwaken(){
 		console.log(this.name,"onAwaken");
 	}

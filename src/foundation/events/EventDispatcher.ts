@@ -15,7 +15,7 @@ namespace foundation
             this.mTarget = target;
         }
 
-        addEventListener(type: string, listener: Action<EventX>, thisObj?: any, priority?: number): boolean
+        addEventListener(type: string, listener: ActionT<EventX>, thisObj?: any, priority?: number): boolean
         {
             if (listener == null)
             {
@@ -91,7 +91,7 @@ namespace foundation
             }
 
             e.$setCurrentTarget(this.mTarget);
-            let listener:Action<EventX>;
+            let listener:ActionT<EventX>;
             for (let j = 0; j < i; j++) {
 
                 t = temp[j];
@@ -122,7 +122,7 @@ namespace foundation
             return false;
         }
 
-        removeEventListener(type: string, listener: Action<EventX>, thisObj?: any): boolean
+        removeEventListener(type: string, listener: ActionT<EventX>, thisObj?: any): boolean
         {
             if (this.mEventListeners != null)
             {

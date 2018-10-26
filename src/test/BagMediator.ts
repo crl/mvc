@@ -14,6 +14,13 @@ namespace gameSDK {
 			this.proxy.fuck();
 		}
 
+		onMediatorReadyHandle(){
+			this.view.addEventListener(EventX.CLICK,this.clickHandle,this);
+		}
+		clickHandle(e:EventX) {
+			this.toggleSelf();
+		}
+
 		onAwaken(){
 			console.log(this.name,"onAwaken");
 		}

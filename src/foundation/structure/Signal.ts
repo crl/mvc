@@ -1,9 +1,9 @@
 namespace foundation {
     export class Signal extends QueueHandle<EventX>
     {
-        public add(value: Action<EventX>, thisObj: any, priority: number = 0): boolean {
+        public add(value: ActionT<EventX>, thisObj: any, priority: number = 0): boolean {
             if (this.maping == null) {
-                this.maping = new TwoKeyDictionary<Action<EventX>, any, SignalNode<EventX>>();
+                this.maping = new TwoKeyDictionary<ActionT<EventX>, any, SignalNode<EventX>>();
             }
 
             let t: SignalNode<EventX> = this.maping.Get(value, thisObj);
@@ -21,7 +21,7 @@ namespace foundation {
                 return false;
             }
 
-            let newNode = this.getSignalNode();
+            let newNode = Signal.GetSignalNode<EventX>();
 
             newNode.action = value;
             newNode.thisObj=thisObj;
@@ -77,7 +77,7 @@ namespace foundation {
         }
 
 
-        public remove(value: Action<EventX>, thisObj: any): boolean {
+        public remove(value: ActionT<EventX>, thisObj: any): boolean {
             return this.$removeHandle(value, thisObj);
         }
     }

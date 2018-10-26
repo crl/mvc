@@ -1,3 +1,3 @@
 class ListenerItemBox<T>{
-    constructor(public handle: Action<T>,public thisObj:any){}
+    constructor(public handle: ActionT<T>,public thisObj:any){}
 }

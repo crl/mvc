@@ -1,9 +1,9 @@
 
 namespace foundation {
     export class QueueHandle<T>
-    {
-        private static NodePool: List<SignalNode<any>> = new List<SignalNode<any>>();
+    { 
         private static MAX: number = 1000;
+        private static NodePool: List<SignalNode<any>> = new List<SignalNode<any>>();
         private static SignalNodeListPool: List<List<SignalNode<any>>> = new List<List<SignalNode<any>>>();
         protected static GetSignalNodeList<T>(): List<SignalNode<T>> {
             if (QueueHandle.SignalNodeListPool.Count > 0) {
@@ -13,6 +13,17 @@ namespace foundation {
             }
             return new List<SignalNode<T>>();
         }
+        protected static GetSignalNode<T>(): SignalNode<T> {
+            let t: SignalNode<T>;
+            if (QueueHandle.NodePool.Count > 0) {
+                t = QueueHandle.NodePool.Pop();
+                t.$active = NodeActiveState.Runing;
+            }
+            else {
+                t = new SignalNode<T>();
+            }
+            return t;
+        }
         protected static Recycle<T>(node: List<SignalNode<T>>) {
             if (QueueHandle.SignalNodeListPool.Count < 300) {
                 QueueHandle.SignalNodeListPool.Push(node);
@@ -21,7 +32,7 @@ namespace foundation {
 
         firstNode: SignalNode<T>;
         lastNode: SignalNode<T>;
-        protected maping: TwoKeyDictionary<Action<T>, any, SignalNode<T>>;
+        protected maping: TwoKeyDictionary<ActionT<T>, any, SignalNode<T>>;
         protected len: number = 0;
         $dispatching: boolean = false;
         public get length(): number {
@@ -55,9 +66,9 @@ namespace foundation {
                 QueueHandle.Recycle(temp);
             }
         }
-        public $addHandle(value: Action<T>, thisObj: any, data: T, forceData: boolean = false): boolean {
+        public $addHandle(value: ActionT<T>, thisObj: any, data: T, forceData: boolean = false): boolean {
             if (this.maping == null) {
-                this.maping = new TwoKeyDictionary<Action<T>, any, SignalNode<T>>();
+                this.maping = new TwoKeyDictionary<ActionT<T>, any, SignalNode<T>>();
             }
             let t: SignalNode<T> =  this.maping.Get(value, thisObj);
             if (t!=null) {
@@ -77,7 +88,7 @@ namespace foundation {
                 return false;
             }
 
-            t = this.getSignalNode();
+            t = QueueHandle.GetSignalNode();
             t.action = value;
             t.thisObj=thisObj;
             t.data = data;
@@ -101,20 +112,8 @@ namespace foundation {
             return true;
         }
 
-        protected getSignalNode(): SignalNode<T> {
-            let t: SignalNode<T>;
-            if (QueueHandle.NodePool.Count > 0) {
-                t = QueueHandle.NodePool.Pop();
-                t.$active = NodeActiveState.Runing;
-            }
-            else {
-                t = new SignalNode<T>();
-            }
-            return t;
-        }
 
-
-        public $removeHandle(value: Action<T>, thisObj: any): boolean {
+        public $removeHandle(value: ActionT<T>, thisObj: any): boolean {
             if (this.lastNode == null || this.maping == null) {
                 return false;
             }
@@ -132,14 +131,14 @@ namespace foundation {
             return this.$remove(t, value, thisObj);
         }
 
-        public hasHandle(value: Action<T>, thisObj: any): boolean {
+        public hasHandle(value: ActionT<T>, thisObj: any): boolean {
             if (this.maping == null) {
                 return false;
             }
             return this.maping.Get(value, thisObj) != null;
         }
 
-        protected $remove(t: SignalNode<T>, value: Action<T>, thisObj: any): boolean {
+        protected $remove(t: SignalNode<T>, value: ActionT<T>, thisObj: any): boolean {
             if (t == null) {
                 DebugX.LogError("queueHandle error nil");
             }

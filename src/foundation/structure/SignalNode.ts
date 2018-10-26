@@ -11,7 +11,7 @@ namespace foundation {
     {
         next: SignalNode<T>;
         pre: SignalNode<T>;
-        action: Action<T>;
+        action: ActionT<T>;
 
         thisObj:any;
         data: T;

@@ -22,6 +22,7 @@ class BagView extends mvc.AbstactPanel implements mvc.IInjectable {
 		g.endFill();
 		this.s.touchEnabled=true;
 		this.s.addEventListener(egret.TouchEvent.TOUCH_TAP,this.tapHandle,this);
+		this.s.addEventListener(egret.TouchEvent.TOUCH_TAP,this.tapHandle2,this);
 
 
 		let tf=new egret.TextField();
@@ -34,6 +35,9 @@ class BagView extends mvc.AbstactPanel implements mvc.IInjectable {
 		
 		this.addChild(this.s);
 		this.addChild(tf);
+	}
+	tapHandle2(TOUCH_TAP: string, tapHandle2: any, arg2: this): any {
+		this.simpleDispatch(EventX.CLICK);
 	}
 	
 	protected tapHandle(e:egret.TouchEvent){

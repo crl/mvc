@@ -1,7 +1,19 @@
 type Class = new () => any;
 type ClassT<T> = new () => T;
-type Action<T> = (T) => void;
+type ActionT<T> = (T) => void;
+
+type Action=()=>void;
 type Handle<T, R> = (T) => R;
+
+interface IAnyAction{
+    thisObj:any;
+    action:Action;
+}
+
+interface IAnyActionT<T>{
+    thisObj:any;
+    action:ActionT<T>;
+}
 
 /**
  * Dictionary其实就是含有两个对位关系数组的而已

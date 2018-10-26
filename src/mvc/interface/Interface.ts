@@ -19,7 +19,7 @@ namespace mvc {
 	export interface IAsync {
 		readonly isReady: boolean;
 		startSync(): boolean;
-		addReayHandle(handle: Action<EventX>): boolean;
+		addReayHandle(handle: ActionT<EventX>): boolean;
 	}
 	export interface INotifier {
 		simpleDispatch(type: string, data: any): boolean

@@ -1,12 +1,12 @@
 class DebugX{
 	static Warn(message?: any, ...optionalParams: any[]) {
-        console.warn(message,optionalParams);
+        console.warn.apply(console.log,arguments);
     }
     static Log(message?: any, ...optionalParams: any[]) {
-        console.log(message,optionalParams);
+        console.log.apply(console.log,arguments);
     }
     static LogError(message?: any, ...optionalParams: any[]) {
-        console.error(message,optionalParams);
+        console.error.apply(console.log,arguments);
         
         let msg=message;
         if(!msg){
@@ -14,9 +14,9 @@ class DebugX{
         }
         for (const iterator of optionalParams) {
             if(!iterator){
-                msg+=",null";
+                msg+=" null";
             }else{
-                msg+=","+iterator.toString();
+                msg+=" "+iterator.toString();
             }
         }
         alert(msg);

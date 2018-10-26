@@ -53,7 +53,7 @@ class Main extends egret.DisplayObjectContainer {
         mediator.fuck();
         
         let bagMediator=Facade.GetMediator(gameSDK.BagMediator);
-        bagMediator.toggleSelf(1);
+        //bagMediator.toggleSelf(1);
         bagMediator.fuck();
 
         let t=<IStream>{code:1000};
