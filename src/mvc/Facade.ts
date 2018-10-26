@@ -1,5 +1,6 @@
 namespace mvc {
 	export class Facade extends foundation.EventDispatcher implements IFacade {
+	
 		protected mvcInjectLock: { [index: string]: any } = {};
 		protected commandsMap: { [index: string]: any } = {};
 		protected injecter: IInject;
@@ -7,7 +8,7 @@ namespace mvc {
 		protected model: IView;
 		protected static instance: IFacade;
 
-		public static GetInstance(): IFacade {
+		static GetInstance(): IFacade {
 			if (Facade.instance == null) {
 				Facade.instance = new Facade();
 			}
@@ -21,15 +22,15 @@ namespace mvc {
 			this.injecter = new MVCInject(this);
 		}
 
-		public hasMediatorByName(mediatorName: string): boolean {
+		hasMediatorByName(mediatorName: string): boolean {
 			return this.view.get(mediatorName) != null;
 		}
-		public hasMediator<T extends IMediator>(c: ClassT<T>): boolean {
+		hasMediator<T extends IMediator>(c: ClassT<T>): boolean {
 			let aliasName = Singleton.GetAliasName(c);
 			return this.hasMediatorByName(aliasName);
 		}
 
-		public getMediatorByName(mediatorName: string): IMediator {
+		getMediatorByName(mediatorName: string): IMediator {
 			let mediator = <IMediator>this.view.get(mediatorName);
 			if (mediator == null) {
 				let cls = Singleton.GetClass(mediatorName);
@@ -44,14 +45,14 @@ namespace mvc {
 			}
 			return mediator;
 		}
-		public registerMediator(mediator: IMediator) {
+		registerMediator(mediator: IMediator) {
 			this.view.register(mediator);
 		}
-		public registerProxy(proxy: IProxy) {
+		registerProxy(proxy: IProxy) {
 			this.model.register(proxy);
 		}
 
-		public registerCommand<T>(eventType: string, c: ClassT<T>): boolean {
+		registerCommand<T>(eventType: string, c: ClassT<T>): boolean {
 			if (this.commandsMap[eventType]) {
 
 				return false;
@@ -59,7 +60,7 @@ namespace mvc {
 			this.commandsMap[eventType] = c;
 			return true;
 		}
-		public removeCommand<T>(eventType: string, c: ClassT<T>): boolean {
+		removeCommand<T>(eventType: string, c: ClassT<T>): boolean {
 			if (this.commandsMap[eventType]) {
 
 				delete this.commandsMap[eventType]
@@ -67,12 +68,12 @@ namespace mvc {
 			}
 			return false;
 		}
-		public hasCommand(eventType: string): boolean {
+		hasCommand(eventType: string): boolean {
 			return this.commandsMap[eventType] != null;
 		}
 
 
-		public __unSafeInjectInstance(host: IMVCHost, hostName?: string) {
+		__unSafeInjectInstance(host: IMVCHost, hostName?: string) {
 			if (!hostName) {
 				hostName = host.name;
 			}
@@ -83,7 +84,7 @@ namespace mvc {
 			this.mvcInjectLock[hostName] = null;
 		}
 
-		public getInjectLock(className: string): any {
+		getInjectLock(className: string): any {
 			return this.mvcInjectLock[className];
 		}
 
@@ -91,7 +92,7 @@ namespace mvc {
 			return new type();
 		}
 
-		public inject(target: IInjectable): IInjectable {
+		inject(target: IInjectable): IInjectable {
 			if (this.injecter != null) {
 				return this.injecter.inject(target);
 			}
@@ -99,7 +100,7 @@ namespace mvc {
 		}
 
 
-		public getMediator<T extends IMediator>(c: ClassT<T>): T {
+		getMediator<T extends IMediator>(c: ClassT<T>): T {
 			let aliasName =  Singleton.GetAliasName(c);
 			let ins = <T>this.getMediatorByName(aliasName);
 			if (!ins) {
@@ -110,27 +111,27 @@ namespace mvc {
 			return ins;
 		}
 
-		public static GetMediator<T extends IMediator>(c: ClassT<T>): T {
+		static GetMediator<T extends IMediator>(c: ClassT<T>): T {
 			return Facade.GetInstance().getMediator(c);
 		}
-		public static GetProxy<T extends IProxy>(c: ClassT<T>): T {
+		static GetProxy<T extends IProxy>(c: ClassT<T>): T {
 			return Facade.GetInstance().getProxy(c);
 		}
 
-		public static ToggleMediator<T extends IMediator>(c: ClassT<T>): T {
+		static ToggleMediator<T extends IMediator>(c: ClassT<T>): T {
 			return Facade.GetInstance().toggleMediator(c);
 		}
 
 
-		public hasProxyByName(proxyName: string): boolean {
+		hasProxyByName(proxyName: string): boolean {
 			return this.model.get(proxyName) != null;
 		}
-		public hasProxy<T extends IProxy>(c: ClassT<T>): boolean {
+		hasProxy<T extends IProxy>(c: ClassT<T>): boolean {
 			let aliasName = Singleton.GetAliasName(c);
 			return this.hasProxyByName(aliasName);
 		}
 
-		public getProxyByName(proxyName: string): IProxy {
+		getProxyByName(proxyName: string): IProxy {
 			let proxy = <IProxy>this.model.get(proxyName);
 			if (proxy == null) {
 				let cls = Singleton.GetClass(proxyName);
@@ -142,7 +143,7 @@ namespace mvc {
 			}
 			return proxy;
 		}
-		public getProxy<T extends IProxy>(c: ClassT<T>): T {
+		getProxy<T extends IProxy>(c: ClassT<T>): T {
 			let aliasName = Singleton.GetAliasName(c);
 			let ins = <T>this.getProxyByName(aliasName);
 			if (!ins) {
@@ -153,7 +154,7 @@ namespace mvc {
 			return ins;
 		}
 
-		public toggleMediatorByName(mediatorName: string, type: number = -1): IMediator {
+		toggleMediatorByName(mediatorName: string, type: number = -1): IMediator {
 			if (!mediatorName) {
 				return null;
 			}
@@ -212,7 +213,7 @@ namespace mvc {
 			return mediator;
 		}
 
-		public toggleMediator<T extends IMediator>(c: ClassT<T>, type: number = -1): T {
+		toggleMediator<T extends IMediator>(c: ClassT<T>, type: number = -1): T {
 			let aliasName = Singleton.GetAliasName(c);
 			let t = <T>this.toggleMediatorByName(aliasName, type);
 			if (t == null) {
@@ -223,7 +224,7 @@ namespace mvc {
 			return t;
 		}
 
-		public registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind: boolean = true,dispatcher:IEventDispatcher=null) {
+		registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind: boolean = true,dispatcher:IEventDispatcher=null) {
 			if (eventInterester == null) {
 				return;
 			}
@@ -251,11 +252,14 @@ namespace mvc {
 				}
 			}
 		}
-
-		public static SimpleDispatch(eventType: string, data?: any): boolean {
+		
+		autoInitialize(type: string | number) {
+			
+		}
+		static SimpleDispatch(eventType: string, data?: any): boolean {
 			return Facade.GetInstance().simpleDispatch(eventType, data);
 		}
-		public simpleDispatch(eventType: string, data?: any): boolean {
+		simpleDispatch(eventType: string, data?: any): boolean {
 			if (!this.hasEventListener(eventType)) {
 				return false;
 			}

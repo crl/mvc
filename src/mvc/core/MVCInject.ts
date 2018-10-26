@@ -3,7 +3,7 @@ module mvc {
 	 * 注入管理类
 	 */
     export class MVCInject implements IInject {
-        private static INJECTABLE_FULLNAME: string = "__injectable";
+        public static readonly INJECTABLE: string = "__injectable";
         private static InjectDefMapping: { [index: string]: { [index: string]: string } } = {};
         private static InjectShortNameMapping: { [index: string]: string } = {};
 		/**
@@ -111,7 +111,7 @@ module mvc {
                 }
             }else{
                 let ins = new classType();
-                if (ins[MVCInject.INJECTABLE_FULLNAME]) {
+                if (ins[MVCInject.INJECTABLE]) {
                     ins = this.inject(ins);
                 }
                 return ins;
@@ -121,7 +121,7 @@ module mvc {
                 ins = Singleton.__GetOrCreateOneInstance(aliasName);
                 ins["_name"] = aliasName;
                 //可注入 必须加锁 (先调用也是想让onRegister的时候 可以访问注入对像)
-                if (ins[MVCInject.INJECTABLE_FULLNAME]) {
+                if (ins[MVCInject.INJECTABLE]) {
                     this.facade.__unSafeInjectInstance(ins);
                 }
 

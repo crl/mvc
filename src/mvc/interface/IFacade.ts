@@ -1,5 +1,5 @@
 namespace mvc {
-	export interface IFacade extends INotifier {
+	export interface IFacade extends INotifier,IEventDispatcher {
 
 		/**
 		 * 
@@ -48,6 +48,13 @@ namespace mvc {
 		 * @param className 
 		 */
 		getInjectLock(className: string): any;
-		__unSafeInjectInstance(toLockInstance: IMVCHost, className?: string)
+		__unSafeInjectInstance(toLockInstance: IMVCHost, className?: string);
+		inject(target: IInjectable): IInjectable;
+
+
+		/**
+		 * 自动初始化
+		 */
+		autoInitialize(type:string|number);
 	}
 }

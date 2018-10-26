@@ -11,7 +11,7 @@ class SkillView extends BagView{
 
 	protected tapHandle(e:egret.TouchEvent){
 
-		foundation.CallLater.Add(this.laterHandle,this,5000);
+		foundation.CallLater.Add(this.laterHandle,this,2000);
 	
 		this.skillModel.fuck(true);
 	}

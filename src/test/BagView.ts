@@ -42,7 +42,7 @@ class BagView extends mvc.AbstactPanel implements mvc.IInjectable {
 	
 	protected tapHandle(e:egret.TouchEvent){
 
-		foundation.CallLater.Add(this.laterHandle,this,5000);
+		foundation.CallLater.Add(this.laterHandle,this,2000);
 		
 		this.bagModel.fuck(true);
 	}
