@@ -1,6 +1,6 @@
 namespace foundation {
     export class QueueHandle<T>
-    { 
+    {
         private static MAX: number = 1000;
         private static NodePool: List<SignalNode<any>> = new List<SignalNode<any>>();
         private static SignalNodeListPool: List<List<SignalNode<any>>> = new List<List<SignalNode<any>>>();
@@ -42,10 +42,10 @@ namespace foundation {
             if (this.len > 0) {
                 this.$dispatching = true;
                 let t = this.$firstNode;
-                let temp= QueueHandle.GetSignalNodeList<T>();
+                let temp = QueueHandle.GetSignalNodeList<T>();
                 while (t != null) {
                     if (t.$active == NodeActiveState.Runing) {
-                        t.action.call(t.thisObj,e);
+                        t.action.call(t.thisObj, e);
                     }
                     temp.Push(t);
                     t = t.next;
@@ -55,7 +55,7 @@ namespace foundation {
                 for (let i = 0; i < l; i++) {
                     let item = temp.Get(i);
                     if (item.$active == NodeActiveState.ToDoDelete) {
-                        this.$remove(item, item.action,item.thisObj);
+                        this.$remove(item, item.action, item.thisObj);
                     }
                     else if (item.$active == NodeActiveState.ToDoAdd) {
                         item.$active = NodeActiveState.Runing;
@@ -68,8 +68,8 @@ namespace foundation {
             if (this.maping == null) {
                 this.maping = new TwoKeyDictionary<ActionT<T>, any, SignalNode<T>>();
             }
-            let t: SignalNode<T> =  this.maping.Get(value, thisObj);
-            if (t!=null) {
+            let t: SignalNode<T> = this.maping.Get(value, thisObj);
+            if (t != null) {
                 if (t.$active == NodeActiveState.ToDoDelete) {
                     if (this.$dispatching) {
                         t.$active = NodeActiveState.ToDoAdd;
@@ -88,7 +88,7 @@ namespace foundation {
 
             t = QueueHandle.GetSignalNode();
             t.action = value;
-            t.thisObj=thisObj;
+            t.thisObj = thisObj;
             t.data = data;
             this.maping.Add(value, thisObj, t);
 

@@ -24,7 +24,7 @@ namespace foundation {
             let newNode = Signal.GetSignalNode<EventX>();
 
             newNode.action = value;
-            newNode.thisObj=thisObj;
+            newNode.thisObj = thisObj;
             newNode.priority = priority;
 
             this.maping.Add(value, thisObj, newNode);

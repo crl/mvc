@@ -1,17 +1,15 @@
-namespace foundation
-{
+namespace foundation {
     /// <summary>
     ///  状态接口(指单个状态)
     /// </summary>
-    export interface IState extends IEventDispatcher
-    {
+    export interface IState extends IEventDispatcher {
         /// <summary>
         /// 是否初始化完成 
         /// </summary>
-        readonly initialized:boolean;
+        readonly initialized: boolean;
 
-        stateMachine:StateMachine;
-        readonly nextState:string;
+        stateMachine: StateMachine;
+        readonly nextState: string;
 
         /// <summary>
         /// 只做一次调用; 
@@ -22,7 +20,7 @@ namespace foundation
         /// 状态标识; 
         /// </summary>
 
-        readonly type:string
+        readonly type: string
 
         update();
 

@@ -28,7 +28,7 @@ namespace foundation {
                 }
             }
 
-            CallLater.Instance.add(delayTime, handler,thisObj);
+            CallLater.Instance.add(delayTime, handler, thisObj);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace foundation {
         }
 
         static Remove(handler: Action, thisObj?: any, key: string = "") {
-            CallLater.Instance.$removeHandle(handler,thisObj);
+            CallLater.Instance.$removeHandle(handler, thisObj);
             if (key) {
                 CallLater.ActionMap.Remove(key);
             }
@@ -65,9 +65,9 @@ namespace foundation {
         private add(delayTime: number, handler: Action, thisObj: any) {
             this.$addHandle(handler, thisObj, TickManager.GetNow() + delayTime, true);
             if (this.len > 0) {
-                TickManager.Add(this.render,this);
+                TickManager.Add(this.render, this);
             } else if (this.$firstNode != null) {
-                TickManager.Add(this.render,this);
+                TickManager.Add(this.render, this);
                 DebugX.LogError("callLater 有bug:" + this.len);
             }
         }
@@ -80,7 +80,7 @@ namespace foundation {
                 while (t != null) {
                     if (t.$active == NodeActiveState.Runing) {
                         if (now > t.data) {
-                            CallLater.Remove(t.action,t.thisObj);
+                            CallLater.Remove(t.action, t.thisObj);
                             t.action.call(t.thisObj);
                             //DebugX.Log("callLater:" + now + ":" + t.data);
                         }
@@ -93,9 +93,9 @@ namespace foundation {
 
                 let l = temp.Count;
                 for (let i = 0; i < l; i++) {
-                    let item= temp.Get(i);
+                    let item = temp.Get(i);
                     if (item.$active == NodeActiveState.ToDoDelete) {
-                        this.$remove(item, item.action,item.thisObj);
+                        this.$remove(item, item.action, item.thisObj);
                     }
                     else if (item.$active == NodeActiveState.ToDoAdd) {
                         item.$active = NodeActiveState.Runing;
@@ -104,7 +104,7 @@ namespace foundation {
                 CallLater.Recycle(temp);
             }
             else {
-                TickManager.Remove(this.render,this);
+                TickManager.Remove(this.render, this);
             }
         }
     }

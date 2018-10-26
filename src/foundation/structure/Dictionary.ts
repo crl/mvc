@@ -59,7 +59,7 @@ class TwoKeyDictionary<K, K1, V>{
     Add(key: K, key1: K1, value: V) {
         let i = this.keys.indexOf(key);
 
-        if (i == -1 || this.key1s[i]!=key1) {
+        if (i == -1 || this.key1s[i] != key1) {
             this.keys.push(key);
             this.key1s.push(key1);
             this.values.push(value);

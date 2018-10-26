@@ -1,18 +1,18 @@
-class SkillView extends BagView{
+class SkillView extends BagView {
 
 	protected create() {
-		this.tx=300;
-		this.color=0xFF0000;
+		this.tx = 300;
+		this.color = 0xFF0000;
 		super.create();
 	}
 
 	@MVC
-	private skillModel:gameSDK.SkillProxy;
+	private skillModel: gameSDK.SkillProxy;
 
-	protected tapHandle(e:egret.TouchEvent){
+	protected tapHandle(e: egret.TouchEvent) {
 
-		foundation.CallLater.Add(this.laterHandle,this,2000);
-	
+		foundation.CallLater.Add(this.laterHandle, this, 2000);
+
 		this.skillModel.fuck(true);
 	}
 

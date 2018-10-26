@@ -101,7 +101,7 @@ namespace foundation {
             //DebugX.Log(this.GetType().FullName+":add"+data.ToString());
 
             t = QueueAction.GetSignalNode();
-            t.thisObj=thisObj;
+            t.thisObj = thisObj;
             t.action = value;
             t.data = data;
             this.maping.Add(value, thisObj, t);

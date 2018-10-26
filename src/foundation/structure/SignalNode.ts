@@ -13,14 +13,14 @@ namespace foundation {
         pre: SignalNode<T>;
         action: ActionT<T>;
 
-        thisObj:any;
+        thisObj: any;
         data: T;
         /// <summary>
         /// 0:将删除;
         /// 1:正在运行
         /// 2:将加入; 
         /// </summary>
-        $active: NodeActiveState= NodeActiveState.Runing;;
+        $active: NodeActiveState = NodeActiveState.Runing;;
         priority: number = 0;
     }
 

@@ -6,9 +6,9 @@ interface IMessage {
 }
 
 interface ISocketSender extends egret.IEventDispatcher {
-	send(msg: IStream):boolean;
+	send(msg: IStream): boolean;
 	readonly connected: boolean;
-	close():void;
+	close(): void;
 }
 
 
@@ -28,24 +28,22 @@ class SocketX {
 		SocketX.sender = sender;
 	}
 
-	public static Send(msg: IStream):boolean {
+	public static Send(msg: IStream): boolean {
 		return this.sender.send(msg);
 	}
 
 	public static get IsConnected() {
 		return SocketX.sender.connected;
 	}
-	public static Close(){
+	public static Close() {
 		SocketX.sender.close();
 	}
 
-	public static AddEventListener(type:string, listener:(EventX)=>void,thisObj?:any,priority?:number)
-	{
-		SocketX.sender.addEventListener(type,listener,thisObj,false,priority);
+	public static AddEventListener(type: string, listener: (EventX) => void, thisObj?: any, priority?: number) {
+		SocketX.sender.addEventListener(type, listener, thisObj, false, priority);
 	}
-	public static RemoveEventListener(type:string, listener:(EventX)=>void,thisObj?:any)
-	{
-		SocketX.sender.removeEventListener(type,listener,thisObj,false);
+	public static RemoveEventListener(type: string, listener: (EventX) => void, thisObj?: any) {
+		SocketX.sender.removeEventListener(type, listener, thisObj, false);
 	}
 
 	public static AddListener(code: number, handler: ActionT<IStream>, thisObj: any): boolean {

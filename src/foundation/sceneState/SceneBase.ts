@@ -1,31 +1,25 @@
-namespace foundation
-{
-    export abstract class SceneBase extends AbstractState
-    {
-        protected _resizeable:boolean = false;
-        protected facade:mvc.IFacade;
-        public constructor(type:string) 
-        {
+namespace foundation {
+    export abstract class SceneBase extends AbstractState {
+        protected _resizeable: boolean = false;
+        protected facade: mvc.IFacade;
+        public constructor(type: string) {
             super();
             this._type = type;
         }
 
-        initialize()
-        {
+        initialize() {
             this.facade = Facade.GetInstance();
-            if (this[mvc.MVCInject.INJECTABLE])
-            {
-                let t:any=this;
+            if (this[mvc.MVCInject.INJECTABLE]) {
+                let t: any = this;
                 this.facade.inject(t);
             }
             this.facade.autoInitialize(this.type);
 
-            this.facade.addEventListener(EventX.CLEAR_CACHE, this.onClearCache,this);
+            this.facade.addEventListener(EventX.CLEAR_CACHE, this.onClearCache, this);
             super.initialize();
         }
 
-        protected onClearCache(e:EventX)
-        {
+        protected onClearCache(e: EventX) {
 
         }
     }

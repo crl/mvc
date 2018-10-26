@@ -7,14 +7,14 @@ class SkillMediator extends mvc.Mediator {
 
 	@MVC
 	private bagProxy: gameSDK.BagProxy;
-	onMediatorReadyHandle(){
-		this.view.addEventListener(EventX.CLICK,this.clickHandle,this);
+	onMediatorReadyHandle() {
+		this.view.addEventListener(EventX.CLICK, this.clickHandle, this);
 	}
-	clickHandle(e:EventX) {
+	clickHandle(e: EventX) {
 		this.toggleSelf();
 	}
-	onAwaken(){
-		console.log(this.name,"onAwaken");
+	onAwaken() {
+		console.log(this.name, "onAwaken");
 	}
 
 	public fuck() {
@@ -28,11 +28,11 @@ class SkillMediator extends mvc.Mediator {
 		console.log("cmd:", this.name, e.code);
 	}
 
-	
+
 
 
 	@MVCE(InjectEventType.Show, EventX.MEDIATOR_READY)
 	public inject(e: EventX) {
-		console.log(this.name,"Show InjectEventType:", e.type, e.data);
+		console.log(this.name, "Show InjectEventType:", e.type, e.data);
 	}
 }

@@ -3,10 +3,10 @@ module mvc {
 		protected skin: egret.DisplayObjectContainer;
 		constructor() {
 			super();
-			this.name=Object.getPrototypeOf(this)["constructor"].name;
+			this.name = Object.getPrototypeOf(this)["constructor"].name;
 			this.skin = new egret.DisplayObjectContainer();
 		}
-		name:string;
+		name: string;
 		protected _parent: egret.DisplayObjectContainer;
 		protected readyHandle: ListenerItemBox<EventX>[];
 
@@ -23,7 +23,7 @@ module mvc {
 		get isReady(): boolean {
 			return this._isReady;
 		}
-		__refMediator: IMediator=null;
+		__refMediator: IMediator = null;
 
 		startSync(): boolean {
 			if (this._isReady == false) {
@@ -112,7 +112,7 @@ module mvc {
 			this._isShow = true;
 
 			this._parent.addChild(this.skin);
-			this.simpleDispatch(EventX.PANEL_SHOW,this.name);
+			this.simpleDispatch(EventX.PANEL_SHOW, this.name);
 		}
 
 
@@ -129,7 +129,7 @@ module mvc {
 				this.skin.parent.removeChild(this.skin);
 			}
 
-			this.simpleDispatch(EventX.PANEL_HIDE,this.name);
+			this.simpleDispatch(EventX.PANEL_HIDE, this.name);
 		}
 
 		addChild(v: egret.DisplayObject): any {

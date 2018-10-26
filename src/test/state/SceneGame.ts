@@ -16,7 +16,6 @@ class SceneGame extends foundation.SceneBase {
         mvc.Singleton.RegisterMulitClass(SkillMediator, gameSDK.SkillProxy);
         mvc.Singleton.RegisterClass(BagView);
         mvc.Singleton.RegisterClass(SkillView);
-        //Facade.RegisterModule(BagMediator,BagView,gameSDK.BagProxy);
 
         let mediator = Facade.ToggleMediator(SkillMediator);
         mediator.fuck();

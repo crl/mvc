@@ -2,6 +2,8 @@ class ScenePreload extends foundation.SceneBase {
     static readonly TYPE: string = "ScenePreload";
     constructor() {
         super(ScenePreload.TYPE);
+        
+        this._nextState = SceneGame.TYPE;
     }
     awaken() {
 
@@ -18,7 +20,7 @@ class ScenePreload extends foundation.SceneBase {
         let o = JSON.parse(loader.data);
         mvc.MVCInject.InitMVCInjectDef(o);
 
-        this._nextState = SceneGame.TYPE;
+       
         this.sleep();
     }
 }

@@ -146,7 +146,7 @@ namespace foundation {
 
         render(deltaTime: number) {
             if (this.len < 1) {
-                TickManager.Remove(this.render,this);
+                TickManager.Remove(this.render, this);
                 return;
             }
             let now = TickManager.GetNow();
