@@ -41,7 +41,7 @@ namespace mvc {
 		 * @param injectEventType 关注类型
 		 * @param isBind 添加还是删除
 		 */
-		registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind?: boolean);
+		registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind?: boolean,dispatcher?:IEventDispatcher);
 
 		/**
 		 * 用于限制互相依赖的锁

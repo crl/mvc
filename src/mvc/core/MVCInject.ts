@@ -4,24 +4,21 @@ module mvc {
 	 */
     export class MVCInject implements IInject {
         private static INJECTABLE_FULLNAME: string = "__injectable";
-
-        private static injectDefMapping: { [index: string]: { [index: string]: string } } = {};
-        private static injectShortNameMapping: { [index: string]: string } = {};
+        private static InjectDefMapping: { [index: string]: { [index: string]: string } } = {};
+        private static InjectShortNameMapping: { [index: string]: string } = {};
 		/**
-		 * 
 		 * @param o 导出的mvc注入数据
 		 */
         public static InitMVCInjectDef(o: { [index: string]: string[] }) {
-
             for (const fullClassName in o) {
                 let li = o[fullClassName];
-                let map = MVCInject.injectDefMapping[fullClassName];
+                let map = MVCInject.InjectDefMapping[fullClassName];
                 if (map == null) {
                     map = {};
-                    MVCInject.injectDefMapping[fullClassName] = map;
+                    MVCInject.InjectDefMapping[fullClassName] = map;
                     let aliasName =Singleton.GetAliasName(fullClassName);
                     if (aliasName != fullClassName) {
-                        MVCInject.injectShortNameMapping[aliasName] = fullClassName;
+                        MVCInject.InjectShortNameMapping[aliasName] = fullClassName;
                     }
                 }
 
@@ -31,18 +28,13 @@ module mvc {
                 }
             }
         }
-
-        private facade: IFacade;
-        public constructor(facade: IFacade) {
-            this.facade = facade;
-        }
-
+        public constructor(private facade: IFacade) {}
         private getInjectClassByDef(classInjectData: InjectClassData, property: string): Class {
             let fullClassName = classInjectData.getFullClassName();
-            let dic = MVCInject.injectDefMapping[fullClassName];
+            let dic = MVCInject.InjectDefMapping[fullClassName];
             if (!dic) {
-                fullClassName = MVCInject.injectShortNameMapping[fullClassName];
-                dic = MVCInject.injectDefMapping[fullClassName];
+                fullClassName = MVCInject.InjectShortNameMapping[fullClassName];
+                dic = MVCInject.InjectDefMapping[fullClassName];
             }
             if (!dic) {
                 return null;
@@ -76,7 +68,6 @@ module mvc {
             }
             return target;
         }
-
         protected doInject(classInjectData: InjectClassData, target: IInjectable) {
             for (let key in classInjectData.propertys) {
                 let cls = this.getInjectClassByDef(classInjectData, key);
@@ -95,15 +86,12 @@ module mvc {
                     (<IMediator>target).setProxy(o);
                 }
             }
-
             for (let cmd in classInjectData.cmds) {
                 let list = classInjectData.cmds[cmd];
-
                 for (let item of list) {
                     SocketX.AddListener(+cmd, item, target);
                 }
             }
-
         }
         protected autoMVC(classType:Class): any {
             let fullClassName = Singleton.GetClassFullName(classType);
@@ -128,12 +116,10 @@ module mvc {
                 }
                 return ins;
             }
-
             let ins = this.facade.getInjectLock(aliasName);
             if (!ins) {
                 ins = Singleton.__GetOrCreateOneInstance(aliasName);
                 ins["_name"] = aliasName;
-               
                 //可注入 必须加锁 (先调用也是想让onRegister的时候 可以访问注入对像)
                 if (ins[MVCInject.INJECTABLE_FULLNAME]) {
                     this.facade.__unSafeInjectInstance(ins);
@@ -146,7 +132,6 @@ module mvc {
                     this.facade.registerProxy(<IProxy>ins);
                 }
             }
-
             return ins;
         }
     }

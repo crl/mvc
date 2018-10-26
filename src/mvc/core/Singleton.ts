@@ -93,7 +93,7 @@ namespace mvc {
          * @param aliasName 取一个别名
          * @param fullClassName 实际的完整类名(因为js默认编译是不包含包的名称空间或者模块,完整名称有利于区别不同的模块下面的同名类)
          */
-        public static RegisterClass<T>(c: Class, aliasName?: string, fullClassName?: string) {
+        public static RegisterClass(c: Class, aliasName?: string, fullClassName?: string) {
             if (!fullClassName) {
                 fullClassName = Singleton.GetClassFullName(c);
             }

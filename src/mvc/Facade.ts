@@ -16,8 +16,8 @@ namespace mvc {
 
 		protected constructor() {
 			super();
-			this.view = new View(this);
-			this.model = new View(this);
+			this.view = new View();
+			this.model = new View();
 			this.injecter = new MVCInject(this);
 		}
 
@@ -223,7 +223,7 @@ namespace mvc {
 			return t;
 		}
 
-		public registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind: boolean = true) {
+		public registerEventInterester(eventInterester: IEventInterester, injectEventType: InjectEventType, isBind: boolean = true,dispatcher:IEventDispatcher=null) {
 			if (eventInterester == null) {
 				return;
 			}
@@ -232,17 +232,21 @@ namespace mvc {
 				return;
 			}
 
+			if(dispatcher==null){
+				dispatcher=this;
+			}
+
 			if (isBind) {
 				for (let typeEventsHandle of eventInterests) {
 					for (let eventType of typeEventsHandle.events) {
-						this.addEventListener(eventType, typeEventsHandle.handle, eventInterester);
+						dispatcher.addEventListener(eventType, typeEventsHandle.handle, eventInterester);
 					}
 				}
 			}
 			else {
 				for (let typeEventsHandle of eventInterests) {
 					for (let eventType of typeEventsHandle.events) {
-						this.removeEventListener(eventType, typeEventsHandle.handle, eventInterester);
+						dispatcher.removeEventListener(eventType, typeEventsHandle.handle, eventInterester);
 					}
 				}
 			}

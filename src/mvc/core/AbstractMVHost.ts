@@ -65,6 +65,7 @@ module mvc {
 		}
 
 		protected dispatchReayHandle() {
+			this.facade.registerEventInterester(this,InjectEventType.Always,true);
 
 			if (this.readyHandle != null) {
 				this.readyHandle.forEach((val, index, list) => {
@@ -87,7 +88,7 @@ module mvc {
 
 		}
 		public onRemove() {
-
+			this.facade.registerEventInterester(this,InjectEventType.Always,false);
 		}
 	}
 }

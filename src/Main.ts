@@ -49,12 +49,12 @@ class Main extends egret.DisplayObjectContainer {
         mvc.Singleton.RegisterClass(SkillView);
         //Facade.RegisterModule(BagMediator,BagView,gameSDK.BagProxy);
 
-        let bagMediator:gameSDK.BagMediator=Facade.GetMediator(gameSDK.BagMediator);
-        bagMediator.toggleSelf(1);
-        bagMediator.fuck();
-
         let mediator=Facade.ToggleMediator(SkillMediator);
         mediator.fuck();
+        
+        let bagMediator=Facade.GetMediator(gameSDK.BagMediator);
+        bagMediator.toggleSelf(1);
+        bagMediator.fuck();
 
         let t=<IStream>{code:1000};
         SocketX.Dispatch(t);

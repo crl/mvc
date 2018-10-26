@@ -5,8 +5,8 @@ module mvc {
 		protected _view: IPanel;
 		protected _model: IProxy;
 
-		protected _hasProgress: boolean;
-		protected _isAwake: boolean;
+		protected _hasProgress: boolean=false;
+		protected _isAwake: boolean=false;
 
 		public setView(value: IPanel) {
 			if (this._view != null) {
@@ -22,7 +22,6 @@ module mvc {
 
 			if (this._view != null) {
 				this._view.__refMediator = this;
-				this.bindSetViewEvent(this._view, true);
 				let asyncView = <IAsync>this._view;
 				if (asyncView.isReady == false) {
 					if (this._hasProgress) {
@@ -56,9 +55,9 @@ module mvc {
 					if (this.isCanAwaken() && this.isReady && this._isAwake == false) {
 						this._isAwake = true;
 						if (this._model != null) {
-							this.registerProxyEvent(this._model, true);
+							this.facade.registerEventInterester(this,InjectEventType.Proxy,true,this._model);
 						}
-						this.preAwaken();
+						this.onPreAwaken();
 					}
 					break;
 				case EventX.PANEL_HIDE:
@@ -68,19 +67,11 @@ module mvc {
 					if (this.isReady && this._isAwake) {
 						this._isAwake = false;
 						if (this._model != null) {
-							this.registerProxyEvent(this._model, false);
+							this.facade.registerEventInterester(this,InjectEventType.Proxy,false,this._model);
 						}
-						this.preSleep();
+						this.onPreSleep();
 					}
 					break;
-
-
-				//case PanelEvent.MOTION_HIDE_FINISHED:
-				//this.viewMotionFinishedHandle(false);
-				//break;
-				//case PanelEvent.MOTION_SHOW_FINISHED:
-				//this.viewMotionFinishedHandle(true);
-				//break;
 			}
 		}
 
@@ -111,13 +102,13 @@ module mvc {
 				if (this._hasProgress) {
 					this._model.removeEventListener(EventX.PROGRESS, this.modelProgressHandle, this);
 				}
-				this._model.removeEventListener(EventX.READY, this.preModelReadyHandle, this);
-				this.registerProxyEvent(this._model, false);
+				this._model.removeEventListener(EventX.READY, this.onPreModelReadyHandle, this);
+				this.facade.registerEventInterester(this,InjectEventType.Proxy,false,this._model);
 			}
 
 			this._model = value;
 			if (this._model != null && this.isReady && this._isAwake) {
-				this.registerProxyEvent(this._model, true);
+				this.facade.registerEventInterester(this,InjectEventType.Proxy,true,this._model);
 			}
 		}
 		public getProxy(): IProxy {
@@ -126,28 +117,6 @@ module mvc {
 
 		public toggleSelf(type: number = -1) {
 			this.facade.toggleMediatorByName(this.name, type);
-		}
-
-
-		protected registerProxyEvent(_model: IProxy, isBind: boolean) {
-			if (_model == null) {
-				return;
-			}
-			let eventInterests = this.getEventInterests(InjectEventType.Proxy);
-			if (isBind) {
-				for (let typeEventsHandle of eventInterests) {
-					for (let eventType of typeEventsHandle.events) {
-						_model.addEventListener(eventType, typeEventsHandle.handle, this);
-					}
-				}
-			}
-			else {
-				for (let typeEventsHandle of eventInterests) {
-					for (let eventType of typeEventsHandle.events) {
-						_model.removeEventListener(eventType, typeEventsHandle.handle, this);
-					}
-				}
-			}
 		}
 
 		protected viewProgressHandle(e: EventX) {
@@ -165,9 +134,9 @@ module mvc {
 					panel.removeEventListener(EventX.PROGRESS, this.viewProgressHandle, this);
 				}
 			}
-			this.viewReadyHandle();
+			this.onViewReadyHandle();
 			if (this._model == null) {
-				this.preMediatorReadyHandle();
+				this.onPreMediatorReadyHandle();
 				return;
 			}
 
@@ -176,76 +145,77 @@ module mvc {
 				if (this._hasProgress) {
 					this._model.addEventListener(EventX.PROGRESS, this.modelProgressHandle, this);
 				}
-				this._model.addEventListener(EventX.READY, this.preModelReadyHandle, this);
+				this._model.addEventListener(EventX.READY, this.onPreModelReadyHandle, this);
 				asyncModel.startSync();
 				return;
 
 			}
-			this.preMediatorReadyHandle();
+			this.onPreMediatorReadyHandle();
 		}
 
-		protected preModelReadyHandle(e: EventX) {
+		protected onPreModelReadyHandle(e: EventX) {
 			let proxy = e.target;
 			if (this._hasProgress) {
 				proxy.removeEventListener(EventX.PROGRESS, this.modelProgressHandle);
 			}
-			proxy.removeEventListener(EventX.READY, this.preModelReadyHandle);
-			this.modelReadyHandle();
-			this.preMediatorReadyHandle();
+			proxy.removeEventListener(EventX.READY, this.onPreModelReadyHandle);
+			this.onModelReadyHandle();
+			this.onPreMediatorReadyHandle();
 		}
 
-		protected viewReadyHandle() {
-
-		}
-
-		protected modelReadyHandle() {
+		protected onViewReadyHandle() {
 
 		}
 
-		protected preMediatorReadyHandle() {
-			this.mediatorReadyHandle();
+		protected onModelReadyHandle() {
+
+		}
+
+		protected onPreMediatorReadyHandle() {
+			this.onMediatorReadyHandle();
 			//DebugX.Log("mediator:{0} ready!",this.name);
 			this._isReady = true;
 			
 			this.dispatchReayHandle();
 			this.facade.simpleDispatch(EventX.MEDIATOR_READY, this.name);
 
+			this.bindSetViewEvent(this._view, true);
 			if (this._view.isShow) {
-				this.stageHandle(new EventX(EventX.ADDED_TO_STAGE));
+				this.stageHandle(new EventX(EventX.PANEL_SHOW));
 			}
 		}
 
-		protected mediatorReadyHandle() {
+		protected onMediatorReadyHandle() {
 
 		}
 
 		private _isCached: boolean = false;
-		protected preAwaken() {
+		protected onPreAwaken() {
 			if (this._isCached == false) {
 				this._isCached = true;
 				this.onCache();
 			}
-			this.awaken();
-			this.updateView();
+			this.onAwaken();
+			this.onUpdateView();
 
 			this.facade.simpleDispatch(EventX.MEDIATOR_SHOW, name);
 		}
 
-		protected awaken() {
+		protected onAwaken() {
 		}
 
 
 
-		protected preSleep() {
-			this.sleep();
+		protected onPreSleep() {
+			this.onSleep();
 			this.facade.simpleDispatch(EventX.MEDIATOR_HIDE, name);
 		}
 
-		protected sleep() {
+		protected onSleep() {
 
 		}
 
-		protected updateView() {
+		protected onUpdateView() {
 		}
 		protected onCache() {
 		}

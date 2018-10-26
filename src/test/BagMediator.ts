@@ -14,6 +14,10 @@ namespace gameSDK {
 			this.proxy.fuck();
 		}
 
+		onAwaken(){
+			console.log(this.name,"onAwaken");
+		}
+
 		@CMD(1000)
 		public cmd(e:IStream){
 			console.log("cmd:",this.name,e.code);
@@ -22,7 +26,7 @@ namespace gameSDK {
 
 		@MVCE(InjectEventType.Always,EventX.READY,EventX.MEDIATOR_READY)
 		private inject(e:EventX){
-			console.log("InjectEventType:",this.name,e.type,e.data);
+			console.log(this.name,"Always InjectEventType:", e.type, e.data);
 		}
 	}
 }
