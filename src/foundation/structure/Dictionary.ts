@@ -1,20 +1,3 @@
-type Class = new () => any;
-type ClassT<T> = new () => T;
-type ActionT<T> = (T) => void;
-
-type Action=()=>void;
-type Handle<T, R> = (T) => R;
-
-interface IAnyAction{
-    thisObj:any;
-    action:Action;
-}
-
-interface IAnyActionT<T>{
-    thisObj:any;
-    action:ActionT<T>;
-}
-
 /**
  * Dictionary其实就是含有两个对位关系数组的而已
  * 接口尽量符合C#,因为我要靠一些类过来方便
