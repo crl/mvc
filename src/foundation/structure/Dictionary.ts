@@ -1,4 +1,5 @@
-type List<T>=Array<T>;
+type Class=new()=>any;
+type ClassT<T>=new()=>T;
 type Action<T>=(T)=>void;
 type Handle<T,R>=(T)=>R;
 
@@ -28,6 +29,9 @@ class Dictionary<K, V>{
     }
     ContainsValue(value:V):boolean{
         return this.values.indexOf(value)!=-1;
+    }
+    get(key:string){
+
     }
 
     Remove(key: K): boolean {

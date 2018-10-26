@@ -2,20 +2,20 @@
 namespace foundation {
     export class QueueHandle<T>
     {
-        private static NodePool: List<SignalNode<any>> = new Array<SignalNode<any>>();
+        private static NodePool: List<SignalNode<any>> = new List<SignalNode<any>>();
         private static MAX: number = 1000;
-        private static SignalNodeListPool: List<List<SignalNode<any>>> = new Array<List<SignalNode<any>>>();
+        private static SignalNodeListPool: List<List<SignalNode<any>>> = new List<List<SignalNode<any>>>();
         protected static GetSignalNodeList(): List<SignalNode<any>> {
-            if (QueueHandle.SignalNodeListPool.length > 0) {
-                let temp = QueueHandle.SignalNodeListPool.pop();
-                temp.length = 0;
+            if (QueueHandle.SignalNodeListPool.Count > 0) {
+                let temp = QueueHandle.SignalNodeListPool.Pop();
+                temp.Clear();
                 return temp;
             }
-            return new Array<SignalNode<any>>();
+            return new List<SignalNode<any>>();
         }
         protected static Recycle(node: List<SignalNode<any>>) {
-            if (QueueHandle.SignalNodeListPool.length < 300) {
-                QueueHandle.SignalNodeListPool.push(node);
+            if (QueueHandle.SignalNodeListPool.Count < 300) {
+                QueueHandle.SignalNodeListPool.Push(node);
             }
         }
 
@@ -37,11 +37,11 @@ namespace foundation {
                     if (t.__active == NodeActiveState.Runing) {
                         t.action(e);
                     }
-                    temp.push(t);
+                    temp.Push(t);
                     t = t.next;
                 }
                 this.__dispatching = false;
-                let l = temp.length;
+                let l = temp.Count;
                 for (let i = 0; i < l; i++) {
                     let item = temp[i];
 
@@ -102,8 +102,8 @@ namespace foundation {
 
         protected getSignalNode(): SignalNode<T> {
             let t: SignalNode<T>;
-            if (QueueHandle.NodePool.length > 0) {
-                t = QueueHandle.NodePool.pop();
+            if (QueueHandle.NodePool.Count > 0) {
+                t = QueueHandle.NodePool.Pop();
                 t.__active = NodeActiveState.Runing;
             }
             else {
@@ -159,10 +159,10 @@ namespace foundation {
 
             this.maping.Remove(value);
 
-            if (QueueHandle.NodePool.length < QueueHandle.MAX) {
+            if (QueueHandle.NodePool.Count < QueueHandle.MAX) {
                 t.action = null;
                 t.pre = t.next = null;
-                QueueHandle.NodePool.push(t);
+                QueueHandle.NodePool.Push(t);
             }
             this.len--;
 
@@ -174,7 +174,7 @@ namespace foundation {
         }
 
 
-        public _clear() {
+        $clear() {
             if (null == this.firstNode) {
                 return;
             }
@@ -182,14 +182,14 @@ namespace foundation {
             let n: SignalNode<T>;
             while (t != null) {
                 t.action = null;
-                if (QueueHandle.NodePool.length > QueueHandle.MAX) {
+                if (QueueHandle.NodePool.Count > QueueHandle.MAX) {
                     break;
                 }
                 n = t.next;
 
                 t.action = null;
                 t.pre = t.next = null;
-                QueueHandle.NodePool.push(t);
+                QueueHandle.NodePool.Push(t);
 
                 t = n;
             }

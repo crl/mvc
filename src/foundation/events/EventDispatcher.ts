@@ -2,12 +2,11 @@ namespace foundation
 {
     export class EventDispatcher implements IEventDispatcher,IDisposable
     {
-         mEventListeners:Dictionary<string, Signal> = null;
-         mTarget:IEventDispatcher;
-
+        private mEventListeners:Dictionary<string, Signal> = null;
+        private mTarget:IEventDispatcher;
 
         /** Creates an EventDispatcher. */
-        public constructor(target:IEventDispatcher = null)
+        constructor(target:IEventDispatcher = null)
         {
             if (target == null)
             {
@@ -16,7 +15,7 @@ namespace foundation
             this.mTarget = target;
         }
 
-        public addEventListener(type: string, listener: Action<EventX>, thisObj?: any, priority?: number): boolean
+        addEventListener(type: string, listener: Action<EventX>, thisObj?: any, priority?: number): boolean
         {
             if (listener == null)
             {
@@ -37,7 +36,7 @@ namespace foundation
             return signal.add(listener, priority);
         }
 
-        public dispatchEvent(e: EventX):boolean
+        dispatchEvent(e: EventX):boolean
         {
             if (e == null)
             {
@@ -50,21 +49,21 @@ namespace foundation
             }
  
             let previousTarget:IEventDispatcher = e.target;
-            e.setTarget(mTarget);
+            e.$setTarget(this.mTarget);
 
-            let b = this.invokeEvent(e);
+            let b = this.$invokeEvent(e);
 
-            if (previousTarget != null) e.setTarget(previousTarget);
+            if (previousTarget != null) e.$setTarget(previousTarget);
 
             return b;
         }
 
-        protected void innerDirectDispatchEvent(e:EventX)
+        protected innerDirectDispatchEvent(e:EventX)
         {
-            dispatchEvent(e);
+            this.dispatchEvent(e);
         }
 
-        internal invokeEvent(e:EventX):boolean
+        $invokeEvent(e:EventX):boolean
         {
             if (this.mEventListeners == null)
             {
@@ -86,12 +85,12 @@ namespace foundation
 
             let i = 0;
             while (t != null) {
-                temp.push(t.action);
+                temp.Push(t.action);
                 t = t.next;
                 i++;
             }
 
-            e.setCurrentTarget(mTarget);
+            e.$setCurrentTarget(this.mTarget);
 
             let listener:Action<EventX>;
             for (let j = 0; j < i; j++) {
@@ -100,7 +99,7 @@ namespace foundation
 
                 listener(e);
 
-                if (e.stopsImmediatePropagation) {
+                if (e.$stopsImmediatePropagation) {
 
                     return true;
                 }
@@ -108,10 +107,10 @@ namespace foundation
 
             SimpleListPool.Release(temp);
 
-            return e.stopsPropagation;
+            return e.$stopsPropagation;
         }
 
-        public hasEventListener(type: string):boolean
+        hasEventListener(type: string):boolean
         {
             if (this.mEventListeners == null)
             {
@@ -126,7 +125,7 @@ namespace foundation
             return false;
         }
 
-        public removeEventListener(type: string, listener: Action<EventX>, thisObj?: any): boolean
+        removeEventListener(type: string, listener: Action<EventX>, thisObj?: any): boolean
         {
 
             if (this.mEventListeners != null)
@@ -141,7 +140,7 @@ namespace foundation
             return true;
         }
 
-        public removeEventListeners(type:string= null)
+        removeEventListeners(type:string= null)
 		{
             if (type != null && this.mEventListeners != null) {
                 this.mEventListeners.Remove(type);
@@ -150,25 +149,25 @@ namespace foundation
             }
 		}
 
-        public dispose()
+        dispose()
         {
-            this._clear();
+            this.$clear();
         }
 
-        public simpleDispatch(type:string, data:any = null):boolean
+        simpleDispatch(type:string, data:any = null):boolean
         {
             if (this.hasEventListener(type) == false)
             {
                 return false;
             }
             let e = EventX.FromPool(type, data, false);
-            let b = dispatchEvent(e);
+            let b = this.dispatchEvent(e);
             EventX.ToPool(e);
             return b;
         }
 
 
-        _clear()
+        $clear()
         {
             if (this.mEventListeners == null)
             {
@@ -177,7 +176,7 @@ namespace foundation
 
             for(let signal of this.mEventListeners.Values)
             {
-                signal._clear();
+                signal.$clear();
             }
 
             this.mEventListeners = null;

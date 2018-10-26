@@ -1,5 +1,5 @@
 namespace mvc {
-	export class Facade extends egret.EventDispatcher implements IFacade {
+	export class Facade extends foundation.EventDispatcher implements IFacade {
 		protected mvcInjectLock: { [index: string]: any } = {};
 		protected commandsMap: { [index: string]: any } = {};
 		protected injecter: IInject;
