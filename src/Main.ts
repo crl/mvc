@@ -10,6 +10,7 @@ class Main extends egret.DisplayObjectContainer {
         egret.lifecycle.addLifecycleListener((context) => {
             // custom lifecycle plugin
             context.onUpdate = () => {
+                foundation.TickManager.Tick(egret.getTimer());
             }
         })
 

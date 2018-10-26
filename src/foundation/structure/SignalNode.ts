@@ -20,7 +20,7 @@ namespace foundation {
         /// 1:正在运行
         /// 2:将加入; 
         /// </summary>
-        $active: NodeActiveState;
+        $active: NodeActiveState= NodeActiveState.Runing;;
         priority: number = 0;
     }
 

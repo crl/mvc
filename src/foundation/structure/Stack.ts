@@ -13,6 +13,9 @@ class Stack<T>{
         }
         return null;
     }
+    Get(i:number):T{
+      return <T>this[i];
+    }
     get Count(): number {
         return this.len;
     }
@@ -27,5 +30,4 @@ class Stack<T>{
 }
 
 class List<T> extends Stack<T>{
-
 }

@@ -13,17 +13,13 @@ namespace foundation {
             switch (dtType) {
                 case DeltaTimeType.DELTA_TIME:
                     return 16;
-
                 case DeltaTimeType.FIXED_DELTA_TIME:
                     return 16;
-
                 case DeltaTimeType.UNSCALED_DELTA_TIME:
                     return 16;
             }
             return 16;
         }
-
-
         private constructor(delayTime: number = 500) {
             super();
             this.delayTime = delayTime;
@@ -51,8 +47,6 @@ namespace foundation {
             }
             TimerUtil.time30.add(handler, thisObj, delayTime);
         }
-
-
         private static time100: TimerUtil;
         /// <summary>
         /// 添加重复调用频率函数
@@ -92,7 +86,6 @@ namespace foundation {
                     return;
                 }
             }
-
             if (TimerUtil.time1000 != null) {
                 if (TimerUtil.time1000.$removeHandle(handler, thisObj)) {
                     return;
@@ -126,8 +119,6 @@ namespace foundation {
 
             TimerUtil.time500.add(handler, thisObj, delayTime);
         }
-
-
         private static time700: TimerUtil;
         /// <summary>
         /// 添加重复调用频率函数
@@ -140,7 +131,6 @@ namespace foundation {
             }
             TimerUtil.time700.add(handler, thisObj, delayTime);
         }
-
         private static time1000: TimerUtil;
         /// <summary>
         /// 添加重复调用频率函数
@@ -156,7 +146,7 @@ namespace foundation {
 
         render(deltaTime: number) {
             if (this.len < 1) {
-                TickManager.Remove(this.render);
+                TickManager.Remove(this.render,this);
                 return;
             }
             let now = TickManager.GetNow();
@@ -168,9 +158,7 @@ namespace foundation {
 
             this.$dispatching = true;
             let t = this.$firstNode;
-
             let temp = QueueHandle.GetSignalNodeList<number>();
-
             while (t != null) {
                 if (t.$active == NodeActiveState.Runing) {
                     let delta = this.delayTime;
@@ -186,10 +174,9 @@ namespace foundation {
                 t = t.next;
             }
             this.$dispatching = false;
-
             let l = temp.Count;
             for (let i = 0; i < l; i++) {
-                let item = temp[i];
+                let item = temp.Get(i);
                 if (item.$active == NodeActiveState.ToDoDelete) {
                     this.$remove(item, item.action, item.thisObj);
                 }

@@ -12,7 +12,6 @@ namespace foundation {
             }
             return new List<T>();
         }
-
         public static Release<T>(value: List<T>) {
             if (SimpleListPool.Pools.Count < 100) {
                 value.Clear();

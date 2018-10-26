@@ -75,8 +75,6 @@ namespace foundation {
             this.len++;
             return true;
         }
-
-
         public remove(value: ActionT<EventX>, thisObj: any): boolean {
             return this.$removeHandle(value, thisObj);
         }

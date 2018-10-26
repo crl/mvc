@@ -1,45 +1,35 @@
-namespace foundation
-{
-    export class EventDispatcher implements IEventDispatcher,IDisposable
-    {
-        private mEventListeners:Dictionary<string, Signal> = null;
-        private mTarget:IEventDispatcher;
+namespace foundation {
+    export class EventDispatcher implements IEventDispatcher, IDisposable {
+        private mEventListeners: Dictionary<string, Signal> = null;
+        private mTarget: IEventDispatcher;
 
         /** Creates an EventDispatcher. */
-        constructor(target:IEventDispatcher = null)
-        {
-            if (target == null)
-            {
+        constructor(target: IEventDispatcher = null) {
+            if (target == null) {
                 target = this;
             }
             this.mTarget = target;
         }
 
-        addEventListener(type: string, listener: ActionT<EventX>, thisObj?: any, priority?: number): boolean
-        {
-            if (listener == null)
-            {
+        addEventListener(type: string, listener: ActionT<EventX>, thisObj?: any, priority?: number): boolean {
+            if (listener == null) {
                 return false;
             }
 
-            if (this.mEventListeners == null)
-            {
+            if (this.mEventListeners == null) {
                 this.mEventListeners = new Dictionary<string, Signal>();
             }
-            let signal=this.mEventListeners.Get(type);
-            if (signal==null)
-            {
+            let signal = this.mEventListeners.Get(type);
+            if (signal == null) {
                 signal = new Signal();
                 this.mEventListeners.Add(type, signal);
             }
 
-            return signal.add(listener,thisObj, priority);
+            return signal.add(listener, thisObj, priority);
         }
 
-        dispatchEvent(e: EventX):boolean
-        {
-            if (e == null)
-            {
+        dispatchEvent(e: EventX): boolean {
+            if (e == null) {
                 return false;
             }
             let bubbles = e.bubbles;
@@ -47,8 +37,8 @@ namespace foundation
             if (!bubbles && (this.mEventListeners == null || this.mEventListeners.ContainsKey(e.type) == false)) {
                 return false;
             }
- 
-            let previousTarget:IEventDispatcher = e.target;
+
+            let previousTarget: IEventDispatcher = e.target;
             e.$setTarget(this.mTarget);
 
             let b = this.$invokeEvent(e);
@@ -57,22 +47,13 @@ namespace foundation
 
             return b;
         }
-
-        protected innerDirectDispatchEvent(e:EventX)
-        {
-            this.dispatchEvent(e);
-        }
-
-        $invokeEvent(e:EventX):boolean
-        {
-            if (this.mEventListeners == null)
-            {
+        $invokeEvent(e: EventX): boolean {
+            if (this.mEventListeners == null) {
                 return false;
             }
 
-            let signal=this.mEventListeners.Get(e.type);
-            if (signal==null)
-            {
+            let signal = this.mEventListeners.Get(e.type);
+            if (signal == null) {
                 return false;
             }
 
@@ -91,12 +72,12 @@ namespace foundation
             }
 
             e.$setCurrentTarget(this.mTarget);
-            let listener:ActionT<EventX>;
+            let listener: ActionT<EventX>;
             for (let j = 0; j < i; j++) {
 
                 t = temp[j];
 
-                t.action.call(t.thisObj,e);
+                t.action.call(t.thisObj, e);
 
                 if (e.$stopsImmediatePropagation) {
 
@@ -107,53 +88,43 @@ namespace foundation
             return e.$stopsPropagation;
         }
 
-        hasEventListener(type: string):boolean
-        {
-            if (this.mEventListeners == null)
-            {
+        hasEventListener(type: string): boolean {
+            if (this.mEventListeners == null) {
                 return false;
             }
 
-            let signal=this.mEventListeners.Get(type);
-            if (signal)
-            {
+            let signal = this.mEventListeners.Get(type);
+            if (signal) {
                 return signal != null && signal.$firstNode != null;
             }
             return false;
         }
 
-        removeEventListener(type: string, listener: ActionT<EventX>, thisObj?: any): boolean
-        {
-            if (this.mEventListeners != null)
-            {
-                let signal=this.mEventListeners.Get(type);
-                if (signal==null)
-                {
+        removeEventListener(type: string, listener: ActionT<EventX>, thisObj?: any): boolean {
+            if (this.mEventListeners != null) {
+                let signal = this.mEventListeners.Get(type);
+                if (signal == null) {
                     return false;
                 }
-                signal.remove(listener,thisObj);
+                signal.remove(listener, thisObj);
             }
             return true;
         }
 
-        removeEventListeners(type:string= null)
-		{
+        removeEventListeners(type: string = null) {
             if (type != null && this.mEventListeners != null) {
                 this.mEventListeners.Remove(type);
             } else {
                 this.mEventListeners = null;
             }
-		}
+        }
 
-        dispose()
-        {
+        dispose() {
             this.$clear();
         }
 
-        simpleDispatch(type:string, data:any = null):boolean
-        {
-            if (this.hasEventListener(type) == false)
-            {
+        simpleDispatch(type: string, data: any = null): boolean {
+            if (this.hasEventListener(type) == false) {
                 return false;
             }
             let e = EventX.FromPool(type, data, false);
@@ -163,15 +134,12 @@ namespace foundation
         }
 
 
-        $clear()
-        {
-            if (this.mEventListeners == null)
-            {
+        $clear() {
+            if (this.mEventListeners == null) {
                 return;
             }
 
-            for(let signal of this.mEventListeners.Values)
-            {
+            for (let signal of this.mEventListeners.Values) {
                 signal.$clear();
             }
 

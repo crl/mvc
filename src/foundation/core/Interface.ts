@@ -4,13 +4,11 @@ type ActionT<T> = (T) => void;
 type Action = () => void;
 type Handle<T, R> = (T) => R;
 interface IAnyAction {
-    thisObj: any;
-    action: Action;
+    thisObj: any,action: Action;
 }
 
 interface IAnyActionT<T> {
-    thisObj: any;
-    action: ActionT<T>;
+    thisObj: any,action: ActionT<T>;
 }
 interface IDisposable {
     dispose();

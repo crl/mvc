@@ -12,16 +12,12 @@ namespace foundation {
         /// <param name="handler">延迟调用函数</param>
         /// <param name="deleTime">延迟秒数</param>
         /// <param name="key">替换掉key相同 已有的handler</param>
-        public static Add(handler: Action, thisObj?: any, deleTime: number = 16, key: string = "") {
-            if (deleTime <= 0) {
-                handler.call(thisObj,null);
-                return;
-            }
-            if (deleTime < 16) {
-                deleTime = 16;
+        public static Add(handler: Action, thisObj?: any, delayTime: number = -1, key: string = "") {
+            if (delayTime < 16) {
+                delayTime = 16;
             }
 
-            if (!key) {
+            if (key) {
                 let oldAnyAction = CallLater.ActionMap.Get(key);
                 if (oldAnyAction) {
                     CallLater.Remove(oldAnyAction.action);
@@ -32,7 +28,7 @@ namespace foundation {
                 }
             }
 
-            CallLater.Instance.add(deleTime, handler);
+            CallLater.Instance.add(delayTime, handler,thisObj);
         }
 
         /// <summary>
@@ -53,7 +49,7 @@ namespace foundation {
         }
 
         static Remove(handler: Action, thisObj?: any, key: string = "") {
-            CallLater.Instance.$removeHandle(handler);
+            CallLater.Instance.$removeHandle(handler,thisObj);
             if (key) {
                 CallLater.ActionMap.Remove(key);
             }
@@ -66,12 +62,12 @@ namespace foundation {
                 }
             }
         }
-        private add(delayTime: number, handler: Action, thisObj?: any) {
+        private add(delayTime: number, handler: Action, thisObj: any) {
             this.$addHandle(handler, thisObj, TickManager.GetNow() + delayTime, true);
             if (this.len > 0) {
-                TickManager.Add(this.render);
+                TickManager.Add(this.render,this);
             } else if (this.$firstNode != null) {
-                TickManager.Add(this.render);
+                TickManager.Add(this.render,this);
                 DebugX.LogError("callLater 有bug:" + this.len);
             }
         }
@@ -84,8 +80,8 @@ namespace foundation {
                 while (t != null) {
                     if (t.$active == NodeActiveState.Runing) {
                         if (now > t.data) {
-                            CallLater.Remove(t.action);
-                            t.action();
+                            CallLater.Remove(t.action,t.thisObj);
+                            t.action.call(t.thisObj);
                             //DebugX.Log("callLater:" + now + ":" + t.data);
                         }
 
@@ -97,18 +93,18 @@ namespace foundation {
 
                 let l = temp.Count;
                 for (let i = 0; i < l; i++) {
-                    let item = temp[i];
-                    if (item.active == NodeActiveState.ToDoDelete) {
-                        this.$remove(item, item.action);
+                    let item= temp.Get(i);
+                    if (item.$active == NodeActiveState.ToDoDelete) {
+                        this.$remove(item, item.action,item.thisObj);
                     }
-                    else if (item.active == NodeActiveState.ToDoAdd) {
-                        item.active = NodeActiveState.Runing;
+                    else if (item.$active == NodeActiveState.ToDoAdd) {
+                        item.$active = NodeActiveState.Runing;
                     }
                 }
                 CallLater.Recycle(temp);
             }
             else {
-                TickManager.Remove(this.render);
+                TickManager.Remove(this.render,this);
             }
         }
     }

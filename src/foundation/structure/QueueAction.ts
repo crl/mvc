@@ -33,13 +33,9 @@ namespace foundation {
 
         $firstNode: ActionNode<T>;
         $lastNode: ActionNode<T>;
-
         protected maping: TwoKeyDictionary<Action, any, ActionNode<T>>;
-
         protected len: number = 0;
-
         $dispatching: boolean = false;
-
 
         public get length() {
             return this.len;
@@ -63,12 +59,12 @@ namespace foundation {
 
                 let l = temp.Count;
                 for (let i = 0; i < l; i++) {
-                    let item = temp[i];
-                    if (item.active == NodeActiveState.ToDoDelete) {
-                        this.$remove(item, item.action);
+                    let item = temp.Get(i);
+                    if (item.$active == NodeActiveState.ToDoDelete) {
+                        this.$remove(item, item.action, item.thisObj);
                     }
-                    else if (item.active == NodeActiveState.ToDoAdd) {
-                        item.active = NodeActiveState.Runing;
+                    else if (item.$active == NodeActiveState.ToDoAdd) {
+                        item.$active = NodeActiveState.Runing;
                     }
                 }
                 QueueAction.Recycle(temp);
@@ -81,7 +77,7 @@ namespace foundation {
             if (this.maping == null) {
                 this.maping = new TwoKeyDictionary<Action, any, ActionNode<T>>();
             }
-            let t: ActionNode<T> = this.maping.Get(value, thisObj);
+            let t = this.maping.Get(value, thisObj);
             if (t) {
                 if (t.$active == NodeActiveState.ToDoDelete) {
                     if (this.$dispatching) {
@@ -105,6 +101,7 @@ namespace foundation {
             //DebugX.Log(this.GetType().FullName+":add"+data.ToString());
 
             t = QueueAction.GetSignalNode();
+            t.thisObj=thisObj;
             t.action = value;
             t.data = data;
             this.maping.Add(value, thisObj, t);
@@ -128,12 +125,12 @@ namespace foundation {
         }
 
 
-        public $removeHandle(value: Action, thisObj?: any): boolean {
+        public $removeHandle(value: Action, thisObj: any): boolean {
             if (this.$lastNode == null || this.maping == null) {
                 return false;
             }
 
-            let t: ActionNode<T> = this.maping.Get(value, thisObj);
+            let t = this.maping.Get(value, thisObj);
             if (!t || t.$active == NodeActiveState.ToDoDelete) {
                 return false;
             }
@@ -143,10 +140,10 @@ namespace foundation {
                 return true;
             }
 
-            return this.$remove(t, value);
+            return this.$remove(t, value, thisObj);
         }
 
-        public hasHandle(value: Action, thisObj?: any): boolean {
+        public hasHandle(value: Action, thisObj: any): boolean {
             if (this.maping == null) {
                 return false;
             }
@@ -154,7 +151,7 @@ namespace foundation {
             return this.maping.ContainsKey(value, thisObj);
         }
 
-        protected $remove(t: ActionNode<T>, value: Action, thisObj?: any): boolean {
+        protected $remove(t: ActionNode<T>, value: Action, thisObj: any): boolean {
             if (t == null) {
                 DebugX.LogError("queueAction error nil");
             }

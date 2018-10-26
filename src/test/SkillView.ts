@@ -11,8 +11,12 @@ class SkillView extends BagView{
 
 	protected tapHandle(e:egret.TouchEvent){
 
-		Facade.ToggleMediator(gameSDK.BagMediator);
-
+		foundation.CallLater.Add(this.laterHandle,this,5000);
+	
 		this.skillModel.fuck(true);
+	}
+
+	laterHandle(): any {
+		Facade.ToggleMediator(gameSDK.BagMediator);
 	}
 }

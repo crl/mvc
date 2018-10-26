@@ -1,4 +1,3 @@
-
 namespace foundation {
     export class QueueHandle<T>
     { 
@@ -43,10 +42,10 @@ namespace foundation {
             if (this.len > 0) {
                 this.$dispatching = true;
                 let t = this.$firstNode;
-                let temp:List<SignalNode<T>> = QueueHandle.GetSignalNodeList<T>();
+                let temp= QueueHandle.GetSignalNodeList<T>();
                 while (t != null) {
                     if (t.$active == NodeActiveState.Runing) {
-                        t.action(e);
+                        t.action.call(t.thisObj,e);
                     }
                     temp.Push(t);
                     t = t.next;
@@ -54,8 +53,7 @@ namespace foundation {
                 this.$dispatching = false;
                 let l = temp.Count;
                 for (let i = 0; i < l; i++) {
-                    let item = temp[i];
-
+                    let item = temp.Get(i);
                     if (item.$active == NodeActiveState.ToDoDelete) {
                         this.$remove(item, item.action,item.thisObj);
                     }
@@ -108,11 +106,8 @@ namespace foundation {
             }
 
             this.len++;
-
             return true;
         }
-
-
         public $removeHandle(value: ActionT<T>, thisObj: any): boolean {
             if (this.$lastNode == null || this.maping == null) {
                 return false;
