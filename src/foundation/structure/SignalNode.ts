@@ -12,13 +12,15 @@ namespace foundation {
         next: SignalNode<T>;
         pre: SignalNode<T>;
         action: Action<T>;
+
+        thisObj:any;
         data: T;
         /// <summary>
         /// 0:将删除;
         /// 1:正在运行
         /// 2:将加入; 
         /// </summary>
-        __active: NodeActiveState;
+        $active: NodeActiveState;
         priority: number = 0;
     }
 

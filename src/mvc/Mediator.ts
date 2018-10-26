@@ -38,24 +38,18 @@ module mvc {
 
 		protected bindSetViewEvent(view: IPanel, isBind: boolean) {
 			if (isBind) {
-				view.addEventListener(egret.Event.ADDED_TO_STAGE, this.stageHandle, this);
-				view.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.stageHandle, this);
-
-				//view.addEventListener(PanelEvent.MOTION_SHOW_FINISHED, stageHandle);
-				//view.addEventListener(PanelEvent.MOTION_HIDE_FINISHED, stageHandle);
+				view.addEventListener(EventX.PANEL_SHOW, this.stageHandle, this);
+				view.addEventListener(EventX.PANEL_HIDE, this.stageHandle, this);
 			}
 			else {
-				view.removeEventListener(egret.Event.ADDED_TO_STAGE, this.stageHandle, this);
-				view.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.stageHandle, this);
-
-				//view.removeEventListener(PanelEvent.MOTION_SHOW_FINISHED, stageHandle);
-				//view.removeEventListener(PanelEvent.MOTION_HIDE_FINISHED, stageHandle);
+				view.removeEventListener(EventX.PANEL_SHOW, this.stageHandle, this);
+				view.removeEventListener(EventX.PANEL_HIDE, this.stageHandle, this);
 			}
 		}
 
-		protected stageHandle(e: egret.Event) {
+		protected stageHandle(e: EventX) {
 			switch (e.type) {
-				case EventX.ADDED_TO_STAGE:
+				case EventX.PANEL_SHOW:
 					this.facade.registerEventInterester(this, InjectEventType.Show, true);
 					this.facade.registerEventInterester(this._model, InjectEventType.Show, true);
 
@@ -67,7 +61,7 @@ module mvc {
 						this.preAwaken();
 					}
 					break;
-				case EventX.REMOVED_FROM_STAGE:
+				case EventX.PANEL_HIDE:
 					this.facade.registerEventInterester(this, InjectEventType.Show, false);
 					this.facade.registerEventInterester(this._model, InjectEventType.Show, false);
 

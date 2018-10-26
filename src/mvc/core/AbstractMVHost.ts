@@ -1,9 +1,9 @@
 module mvc {
-	
-	export abstract class AbstractMVHost extends egret.EventDispatcher implements IMVCHost, IEventInterester, IAsync, egret.IEventDispatcher {
-		__eventInteresting:{[index:string]:Array<InjectEventTypeHandle>};
-		__injectable=true;
-		
+
+	export abstract class AbstractMVHost extends foundation.EventDispatcher implements IMVCHost, IEventInterester, IAsync, IEventDispatcher {
+		__eventInteresting: { [index: string]: Array<InjectEventTypeHandle> };
+		__injectable = true;
+
 		protected _name: string;
 		public get name() {
 			return this._name;
@@ -23,38 +23,38 @@ module mvc {
 			}
 			return true;
 		}
-		protected load(){
-			
+		protected load() {
+
 		}
 
-		public addReayHandle(handle: (e: EventX) => void,thisObj?:any): boolean {
+		public addReayHandle(handle: Action<EventX>, thisObj?: any): boolean {
 			if (this._isReady) {
-				handle(EventX.ReadyEventX);
+				handle.call(thisObj,EventX.ReadyEventX);
 				return true;
 			}
 
 			if (!this.readyHandle) {
 				this.readyHandle = new Array<ListenerItemBox<EventX>>();
 			} else {
-				for(let item of this.readyHandle){
-					if(item.handle==handle){
+				for (let item of this.readyHandle) {
+					if (item.handle == handle) {
 						return false;
 					}
 				}
 			}
-			this.readyHandle.push(new ListenerItemBox(handle,thisObj));
+			this.readyHandle.push(new ListenerItemBox(handle, thisObj));
 			return true;
 		}
-		public removeReayHandle(handle: (e: EventX) => void,thisObj?:any): boolean {
+		public removeReayHandle(handle: (e: EventX) => void, thisObj?: any): boolean {
 			if (this._isReady) {
 				return false;
 			}
 
 			if (this.readyHandle) {
-				let len=this.readyHandle.length;
-				for(let i=0;i<len;i++){
-					let item=this.readyHandle[i];
-					if(item.handle==handle && item.thisObj==thisObj){
+				let len = this.readyHandle.length;
+				for (let i = 0; i < len; i++) {
+					let item = this.readyHandle[i];
+					if (item.handle == handle && item.thisObj == thisObj) {
 						this.readyHandle.splice(i, 1);
 					}
 					return true;
@@ -65,19 +65,19 @@ module mvc {
 		}
 
 		protected dispatchReayHandle() {
-		
+
 			if (this.readyHandle != null) {
 				this.readyHandle.forEach((val, index, list) => {
 					val.handle.call(val.thisObj, EventX.ReadyEventX);
 				});
-				this.readyHandle.length=0;
-				this.readyHandle=null;
+				this.readyHandle.length = 0;
+				this.readyHandle = null;
 			}
 			this.dispatchEvent(EventX.ReadyEventX);
 		}
 
 		public getEventInterests(type: InjectEventType): Array<InjectEventTypeHandle> {
-			if(!this.__eventInteresting){
+			if (!this.__eventInteresting) {
 				return null;
 			}
 			return this.__eventInteresting[type];

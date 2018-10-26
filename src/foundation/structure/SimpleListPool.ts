@@ -5,18 +5,18 @@ namespace foundation {
     /// <typeparam name="T"></typeparam>
     export class SimpleListPool
     {
-        private static Pools: List<List<any>> = new Array<List<any>>();
+        private static Pools: List<List<any>> = new List<List<any>>();
         public static Get<T>(): List<T> {
-            if (SimpleListPool.Pools.length > 0) {
-                return SimpleListPool.Pools.pop();
+            if (SimpleListPool.Pools.Count > 0) {
+                return SimpleListPool.Pools.Pop();
             }
-            return new Array<T>();
+            return new List<T>();
         }
 
         public static Release<T>(value: List<T>) {
-            if (SimpleListPool.Pools.length < 100) {
-                value.length = 0;
-                SimpleListPool.Pools.push(value);
+            if (SimpleListPool.Pools.Count < 100) {
+                value.Clear();
+                SimpleListPool.Pools.Push(value);
             }
         }
     }

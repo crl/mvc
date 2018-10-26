@@ -26,14 +26,14 @@ namespace foundation
             {
                 this.mEventListeners = new Dictionary<string, Signal>();
             }
-            let signal=this.mEventListeners.TryGetValue(type);
+            let signal=this.mEventListeners.Get(type);
             if (signal==null)
             {
                 signal = new Signal();
                 this.mEventListeners.Add(type, signal);
             }
 
-            return signal.add(listener, priority);
+            return signal.add(listener,thisObj, priority);
         }
 
         dispatchEvent(e: EventX):boolean
@@ -70,7 +70,7 @@ namespace foundation
                 return false;
             }
 
-            let signal=this.mEventListeners.TryGetValue(e.type);
+            let signal=this.mEventListeners.Get(e.type);
             if (signal==null)
             {
                 return false;
@@ -81,32 +81,29 @@ namespace foundation
                 return false;
             }
 
-            let temp = SimpleListPool.Get<Action<EventX>>();
+            let temp = SimpleListPool.Get<SignalNode<EventX>>();
 
             let i = 0;
             while (t != null) {
-                temp.Push(t.action);
+                temp.Push(t);
                 t = t.next;
                 i++;
             }
 
             e.$setCurrentTarget(this.mTarget);
-
             let listener:Action<EventX>;
             for (let j = 0; j < i; j++) {
 
-                listener = temp[j];
+                t = temp[j];
 
-                listener(e);
+                t.action.call(t.thisObj,e);
 
                 if (e.$stopsImmediatePropagation) {
 
                     return true;
                 }
             }
-
             SimpleListPool.Release(temp);
-
             return e.$stopsPropagation;
         }
 
@@ -117,7 +114,7 @@ namespace foundation
                 return false;
             }
 
-            let signal=this.mEventListeners.TryGetValue(type);
+            let signal=this.mEventListeners.Get(type);
             if (signal)
             {
                 return signal != null && signal.firstNode != null;
@@ -127,15 +124,14 @@ namespace foundation
 
         removeEventListener(type: string, listener: Action<EventX>, thisObj?: any): boolean
         {
-
             if (this.mEventListeners != null)
             {
-                let signal=this.mEventListeners.TryGetValue(type);
+                let signal=this.mEventListeners.Get(type);
                 if (signal==null)
                 {
                     return false;
                 }
-                signal.remove(listener);
+                signal.remove(listener,thisObj);
             }
             return true;
         }

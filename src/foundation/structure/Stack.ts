@@ -1,20 +1,31 @@
 class Stack<T>{
-    private list:Array<T>=new Array<T>();
+    private len=0;
     Push(e: T): any {
-        this.list.push(e);
+        this[this.len++] = e;
     }
     Pop(): T {
-        return this.list.pop();
+        if (this.len > 0) {
+            this.len--;
+            let t=this[this.len];
+            this[this.len]=null;
+            delete this[this.len];
+            return t;
+        }
+        return null;
     }
-    get Count(): number{
-        return this.list.length;
+    get Count(): number {
+        return this.len;
     }
 
     Clear() {
-        this.list.length=0;
+        for (let index = 0; index < this.len; index++) {
+            this[index]=null;
+            delete this[index];
+        }
+        this.len=0;
     }
 }
 
 class List<T> extends Stack<T>{
-    
+
 }

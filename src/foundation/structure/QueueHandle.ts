@@ -5,15 +5,15 @@ namespace foundation {
         private static NodePool: List<SignalNode<any>> = new List<SignalNode<any>>();
         private static MAX: number = 1000;
         private static SignalNodeListPool: List<List<SignalNode<any>>> = new List<List<SignalNode<any>>>();
-        protected static GetSignalNodeList(): List<SignalNode<any>> {
+        protected static GetSignalNodeList<T>(): List<SignalNode<T>> {
             if (QueueHandle.SignalNodeListPool.Count > 0) {
                 let temp = QueueHandle.SignalNodeListPool.Pop();
                 temp.Clear();
                 return temp;
             }
-            return new List<SignalNode<any>>();
+            return new List<SignalNode<T>>();
         }
-        protected static Recycle(node: List<SignalNode<any>>) {
+        protected static Recycle<T>(node: List<SignalNode<T>>) {
             if (QueueHandle.SignalNodeListPool.Count < 300) {
                 QueueHandle.SignalNodeListPool.Push(node);
             }
@@ -21,52 +21,52 @@ namespace foundation {
 
         firstNode: SignalNode<T>;
         lastNode: SignalNode<T>;
-        protected maping: Dictionary<Action<T>, SignalNode<T>>;
+        protected maping: TwoKeyDictionary<Action<T>, any, SignalNode<T>>;
         protected len: number = 0;
-        __dispatching: boolean = false;
+        $dispatching: boolean = false;
         public get length(): number {
             return this.len;
         }
 
         public dispatch(e: T) {
             if (this.len > 0) {
-                this.__dispatching = true;
+                this.$dispatching = true;
                 let t = this.firstNode;
-                let temp = QueueHandle.GetSignalNodeList();
+                let temp:List<SignalNode<T>> = QueueHandle.GetSignalNodeList<T>();
                 while (t != null) {
-                    if (t.__active == NodeActiveState.Runing) {
+                    if (t.$active == NodeActiveState.Runing) {
                         t.action(e);
                     }
                     temp.Push(t);
                     t = t.next;
                 }
-                this.__dispatching = false;
+                this.$dispatching = false;
                 let l = temp.Count;
                 for (let i = 0; i < l; i++) {
                     let item = temp[i];
 
-                    if (item.__active == NodeActiveState.ToDoDelete) {
-                        this._remove(item, item.action);
+                    if (item.$active == NodeActiveState.ToDoDelete) {
+                        this.$remove(item, item.action,item.thisObj);
                     }
-                    else if (item.__active == NodeActiveState.ToDoAdd) {
-                        item.__active = NodeActiveState.Runing;
+                    else if (item.$active == NodeActiveState.ToDoAdd) {
+                        item.$active = NodeActiveState.Runing;
                     }
                 }
                 QueueHandle.Recycle(temp);
             }
         }
-        public ___addHandle(value: Action<T>, data: T, forceData: boolean = false): boolean {
+        public $addHandle(value: Action<T>, thisObj: any, data: T, forceData: boolean = false): boolean {
             if (this.maping == null) {
-                this.maping = new Dictionary<Action<T>, SignalNode<T>>();
+                this.maping = new TwoKeyDictionary<Action<T>, any, SignalNode<T>>();
             }
-            let t: SignalNode<T> = null;
-            if (t = this.maping.TryGetValue(value)) {
-                if (t.__active == NodeActiveState.ToDoDelete) {
-                    if (this.__dispatching) {
-                        t.__active = NodeActiveState.ToDoAdd;
+            let t: SignalNode<T> =  this.maping.Get(value, thisObj);
+            if (t!=null) {
+                if (t.$active == NodeActiveState.ToDoDelete) {
+                    if (this.$dispatching) {
+                        t.$active = NodeActiveState.ToDoAdd;
                     }
                     else {
-                        t.__active = NodeActiveState.Runing;
+                        t.$active = NodeActiveState.Runing;
                     }
                     t.data = data;
                     return true;
@@ -79,11 +79,12 @@ namespace foundation {
 
             t = this.getSignalNode();
             t.action = value;
+            t.thisObj=thisObj;
             t.data = data;
-            this.maping.Add(value, t);
+            this.maping.Add(value, thisObj, t);
 
-            if (this.__dispatching) {
-                t.__active = NodeActiveState.ToDoAdd;
+            if (this.$dispatching) {
+                t.$active = NodeActiveState.ToDoAdd;
             }
 
             if (this.lastNode != null) {
@@ -104,7 +105,7 @@ namespace foundation {
             let t: SignalNode<T>;
             if (QueueHandle.NodePool.Count > 0) {
                 t = QueueHandle.NodePool.Pop();
-                t.__active = NodeActiveState.Runing;
+                t.$active = NodeActiveState.Runing;
             }
             else {
                 t = new SignalNode<T>();
@@ -113,32 +114,32 @@ namespace foundation {
         }
 
 
-        public ___removeHandle(value: Action<T>): boolean {
+        public $removeHandle(value: Action<T>, thisObj: any): boolean {
             if (this.lastNode == null || this.maping == null) {
                 return false;
             }
 
-            let t: SignalNode<T> = this.maping.TryGetValue(value);
-            if (t == null || t.__active == NodeActiveState.ToDoDelete) {
+            let t: SignalNode<T> = this.maping.Get(value, thisObj);
+            if (t == null || t.$active == NodeActiveState.ToDoDelete) {
                 return false;
             }
 
-            if (this.__dispatching) {
-                t.__active = NodeActiveState.ToDoDelete;
+            if (this.$dispatching) {
+                t.$active = NodeActiveState.ToDoDelete;
                 return true;
             }
 
-            return this._remove(t, value);
+            return this.$remove(t, value, thisObj);
         }
 
-        public hasHandle(value: Action<T>): boolean {
+        public hasHandle(value: Action<T>, thisObj: any): boolean {
             if (this.maping == null) {
                 return false;
             }
-            return this.maping.Get(value) != null;
+            return this.maping.Get(value, thisObj) != null;
         }
 
-        protected _remove(t: SignalNode<T>, value: Action<T>): boolean {
+        protected $remove(t: SignalNode<T>, value: Action<T>, thisObj: any): boolean {
             if (t == null) {
                 DebugX.LogError("queueHandle error nil");
             }
@@ -155,9 +156,9 @@ namespace foundation {
             } else {
                 this.lastNode = pre;
             }
-            t.__active = NodeActiveState.ToDoDelete;
+            t.$active = NodeActiveState.ToDoDelete;
 
-            this.maping.Remove(value);
+            this.maping.Remove(value, thisObj);
 
             if (QueueHandle.NodePool.Count < QueueHandle.MAX) {
                 t.action = null;

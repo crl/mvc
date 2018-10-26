@@ -35,6 +35,7 @@ class BagView extends mvc.AbstactPanel implements mvc.IInjectable {
 		this.addChild(this.s);
 		this.addChild(tf);
 	}
+	
 	protected tapHandle(e:egret.TouchEvent){
 
 		Facade.ToggleMediator(SkillMediator);

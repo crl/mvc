@@ -1,9 +1,11 @@
 module mvc {
-	export class AbstactPanel extends egret.DisplayObjectContainer implements IPanel {
-		
-		public constructor() {
+	export class AbstactPanel extends foundation.EventDispatcher implements IPanel {
+		protected skin: egret.DisplayObjectContainer;
+		constructor() {
 			super();
+			this.skin = new egret.DisplayObjectContainer();
 		}
+		name:string;
 		protected _parent: egret.DisplayObjectContainer;
 		protected readyHandle: ListenerItemBox<EventX>[];
 
@@ -14,15 +16,15 @@ module mvc {
 		protected _isForceModel: boolean = false;
 
 		protected _isShow: boolean = false;
-		public get isShow(): boolean {
+		get isShow(): boolean {
 			return this._isShow;
 		}
-		public get isReady(): boolean {
+		get isReady(): boolean {
 			return this._isReady;
 		}
-		public __refMediator: IMediator;
+		__refMediator: IMediator;
 
-		public startSync(): boolean {
+		startSync(): boolean {
 			if (this._isReady == false) {
 				this.load();
 			}
@@ -36,7 +38,7 @@ module mvc {
 		}
 
 
-		public addReayHandle(handle: (e: EventX) => void,thisObj?:any): boolean {
+		addReayHandle(handle: (e: EventX) => void, thisObj?: any): boolean {
 			if (this._isReady) {
 				handle(EventX.ReadyEventX);
 				return true;
@@ -45,25 +47,25 @@ module mvc {
 			if (!this.readyHandle) {
 				this.readyHandle = new Array<ListenerItemBox<EventX>>();
 			} else {
-				for(let item of this.readyHandle){
-					if(item.handle==handle){
+				for (let item of this.readyHandle) {
+					if (item.handle == handle) {
 						return false;
 					}
 				}
 			}
-			this.readyHandle.push(new ListenerItemBox(handle,thisObj));
+			this.readyHandle.push(new ListenerItemBox(handle, thisObj));
 			return true;
 		}
-		public removeReayHandle(handle: (e: EventX) => void,thisObj?:any): boolean {
+		removeReayHandle(handle: (e: EventX) => void, thisObj?: any): boolean {
 			if (this._isReady) {
 				return false;
 			}
 
 			if (this.readyHandle) {
-				let len=this.readyHandle.length;
-				for(let i=0;i<len;i++){
-					let item=this.readyHandle[i];
-					if(item.handle==handle && item.thisObj==thisObj){
+				let len = this.readyHandle.length;
+				for (let i = 0; i < len; i++) {
+					let item = this.readyHandle[i];
+					if (item.handle == handle && item.thisObj == thisObj) {
 						this.readyHandle.splice(i, 1);
 					}
 					return true;
@@ -74,20 +76,20 @@ module mvc {
 		}
 
 		protected dispatchReayHandle() {
-			let e=EventX.ReadyEventX;
+			let e = EventX.ReadyEventX;
 			if (this.readyHandle != null) {
 				this.readyHandle.forEach((val, index, list) => {
 					val.handle.call(val.thisObj, e);
 				});
 				//todo clear;
-				this.readyHandle.length=0;
-				this.readyHandle=null;
+				this.readyHandle.length = 0;
+				this.readyHandle = null;
 			}
 			this.dispatchEvent(e);
 		}
 
 
-		public show(container?: egret.DisplayObjectContainer) {
+		show(container?: egret.DisplayObjectContainer) {
 
 			if (this.isShow) {
 				return;
@@ -106,25 +108,33 @@ module mvc {
 			if (this._parent == null) {
 				this._parent = UILocator.UILayer;
 			}
-			this._isShow=true;
-			this._parent.addChild(this);
+			this._isShow = true;
+
+			this._parent.addChild(this.skin);
 		}
 
 
-		public setParent(value: egret.DisplayObjectContainer) {
+		setParent(value: egret.DisplayObjectContainer) {
 			this._parent = value;
 		}
-		public hide() {
+		hide() {
 			if (!this.isShow) {
 				return;
 			}
 
-			this._isShow=false;
-			if(this.parent!=null){
-				this.parent.removeChild(this);
+			this._isShow = false;
+			if (this.skin.parent != null) {
+				this.skin.parent.removeChild(this.skin);
 			}
 		}
-		public bringTop() {
+
+		addChild(v: egret.DisplayObject): any {
+			if (v) {
+				this.skin.addChild(v);
+			}
+		}
+
+		bringTop() {
 
 		}
 

@@ -4,90 +4,92 @@
     class EventX extends foundation.MiEventX
     {
         private static sEventPool:Stack<EventX> = new Stack<EventX>();
+        static readonly START :string= "start";
+        static readonly LOCK :string= "lock";
+        static readonly UNLOCK :string= "unLock";
 
-        public static readonly START :string= "start";
+        static readonly READY :string= "ready";
+        static ReadyEventX=new EventX(EventX.READY);
 
-        public static readonly LOCK :string= "lock";
-        public static readonly UNLOCK :string= "unLock";
+        static readonly OPEN :string= "open";
+        static readonly CLOSE :string= "close";
+        static readonly PAUSE :string= "pause";
+        static readonly STOP :string= "stop";
+        static readonly PLAY :string= "play";
 
-        public static readonly READY :string= "ready";
-
-        public static readonly OPEN :string= "open";
-        public static readonly CLOSE :string= "close";
-        public static readonly PAUSE :string= "pause";
-        public static readonly STOP :string= "stop";
-        public static readonly PLAY :string= "play";
-
-        public static readonly EXIT :string= "exit";
-        public static readonly ENTER :string= "enter";
+        static readonly EXIT :string= "exit";
+        static readonly ENTER :string= "enter";
       
-        public static readonly UPDATE :string= "update";
-        public static readonly ENTER_FRAME :string= "enterFrame";
+        static readonly UPDATE :string= "update";
+        static readonly ENTER_FRAME :string= "enterFrame";
 
-        public static readonly ADDED :string= "added";
-        public static readonly ADDED_TO_STAGE :string= "addedToStage";
+        static readonly ADDED :string= "added";
+        static readonly ADDED_TO_STAGE :string= "addedToStage";
 
-        public static readonly REMOVED :string= "removed";
-        public static readonly REMOVED_FROM_STAGE :string= "removedFromStage";
+        static readonly REMOVED :string= "removed";
+        static readonly REMOVED_FROM_STAGE :string= "removedFromStage";
 
-        public static readonly TRIGGERED :string= "triggered";
+        static readonly TRIGGERED :string= "triggered";
 
-        public static readonly FLATTEN :string= "flatten";
-        public static readonly RESIZE :string= "resize";
+        static readonly FLATTEN :string= "flatten";
+        static readonly RESIZE :string= "resize";
 
-        public static readonly REPAINT :string= "Repaint";
+        static readonly REPAINT :string= "Repaint";
 
-        public static readonly PROGRESS :string= "progress";
-        public static readonly CHANGE :string= "change";
-        public static readonly COMPLETE :string= "complete";
-        public static readonly CANCEL :string= "cancel";
+        static readonly PROGRESS :string= "progress";
+        static readonly CHANGE :string= "change";
+        static readonly COMPLETE :string= "complete";
+        static readonly CANCEL :string= "cancel";
 
-        public static readonly SUCCESS :string= "success";
-        public static readonly FAILED :string= "failed";
+        static readonly SUCCESS :string= "success";
+        static readonly FAILED :string= "failed";
       
-        public static readonly SCROLL :string= "scroll";
-        public static readonly SELECT :string= "select";
+        static readonly SCROLL :string= "scroll";
+        static readonly SELECT :string= "select";
 
-        public static readonly DESTOTY :string= "destory";
-        public static readonly DISPOSE :string= "dispose";
-        public static readonly DATA :string= "data";
+        static readonly DESTOTY :string= "destory";
+        static readonly DISPOSE :string= "dispose";
+        static readonly DATA :string= "data";
 
-        public static readonly ERROR :string= "error";
+        static readonly ERROR :string= "error";
 
-        public static readonly TIMEOUT :string= "timeout";
+        static readonly TIMEOUT :string= "timeout";
 
-        public static readonly CONNECTION :string= "connection";
+        static readonly CONNECTION :string= "connection";
        
-        public static readonly ITEM_CLICK :string= "itemClick";
-        public static readonly CLICK :string= "click";
+        static readonly ITEM_CLICK :string= "itemClick";
+        static readonly CLICK :string= "click";
 
-        public static readonly FOCUS_IN :string= "focus_in";
-        public static readonly FOCUS_OUT :string= "focus_out";
+        static readonly FOCUS_IN :string= "focus_in";
+        static readonly FOCUS_OUT :string= "focus_out";
 
-        public static readonly TOUCH_BEGAN :string= "touchBegan";
-        public static readonly TOUCH_END :string= "touchEnd";
-        public static readonly TOUCH_MOVE :string= "touchMove";
+        static readonly TOUCH_BEGAN :string= "touchBegan";
+        static readonly TOUCH_END :string= "touchEnd";
+        static readonly TOUCH_MOVE :string= "touchMove";
 
-        public static readonly FIRE :string= "fire";
-        public static readonly RELOAD :string= "reload";
-        public static readonly RESTART :string= "restart";
+        static readonly FIRE :string= "fire";
+        static readonly RELOAD :string= "reload";
+        static readonly RESTART :string= "restart";
 
-        public static readonly RENDER :string= "render";
-        public static readonly PING :string= "ping";
+        static readonly RENDER :string= "render";
+        static readonly PING :string= "ping";
 
-        public static readonly RENDERABLE_CHANGE :string= "renderable_change";
+        static readonly RENDERABLE_CHANGE :string= "renderable_change";
 
-        public static readonly MEDIATOR_SHOW :string= "mediatorShow";
-        public static readonly MEDIATOR_HIDE :string= "mediatorHide";
-        public static readonly MEDIATOR_READY :string= "mediatorReady";
-        public static readonly PROXY_READY :string= "proxyReady";
+        static readonly PANEL_SHOW :string= "panelShow";
+        static readonly PANEL_HIDE :string= "panelHide";
 
-        public static readonly ROOT_CREATED :string= "rootCreated";
-        public static readonly SET_SKIN :string= "setSkin";
-        public static readonly STATE_CHANGE :string= "stateChange";
-        public static CLEAR_CACHE :string= "clearCache";
-        public static DEPEND_READY :string= "dependReady";
-        public static CLEAR :string= "clear";
+        static readonly MEDIATOR_SHOW :string= "mediatorShow";
+        static readonly MEDIATOR_HIDE :string= "mediatorHide";
+        static readonly MEDIATOR_READY :string= "mediatorReady";
+        static readonly PROXY_READY :string= "proxyReady";
+
+        static readonly ROOT_CREATED :string= "rootCreated";
+        static readonly SET_SKIN :string= "setSkin";
+        static readonly STATE_CHANGE :string= "stateChange";
+        static CLEAR_CACHE :string= "clearCache";
+        static DEPEND_READY :string= "dependReady";
+        static CLEAR :string= "clear";
 
         private mCurrentTarget:IEventDispatcher;
 
